@@ -1,4 +1,13 @@
 # E.N.D.G.I.N.E.
+
+- **E**xceptionally
+- **N**aïve
+- **D**irectX
+- **G**raphics
+- **I**nterface
+- ‘**N**
+- **E**ngine
+
 We couldn’t think of a word for ‘N’...
 
 ## Development Notes
