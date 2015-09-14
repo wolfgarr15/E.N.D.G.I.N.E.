@@ -1,5 +1,5 @@
 ////////////////////////////////
-// Filename: INIconfig.hpp
+// Filename: XMLconfig.hpp
 ////////////////////////////////
 
 ////////////////////////////////
@@ -10,21 +10,21 @@
 ///////////////////////////////
 // Include Headers
 //-----------------------------
-#include "configObject\ConfigObject.hpp"
-#include <boost\property_tree\ini_parser.hpp>
+#include "ConfigObject.hpp"
+#include "boost\property_tree\xml_parser.hpp"
 
 //////////////////////////////
 // Class Declaration
 //----------------------------
-class INIconfig :
+class XMLconfig :
 	public ConfigObject
 {
 public:
-	INIconfig() = default;
-	~INIconfig() = default;
+	XMLconfig() = default;
+	~XMLconfig() = default;
 
 private:
-	void Read_(const std::string& fileToRead);
-	void Write_(const std::string& fileToWrite);
+	void Read_(const std::string& fileToRead) override;
+	void Write_(const std::string& fileToWrite) override;
 };
 

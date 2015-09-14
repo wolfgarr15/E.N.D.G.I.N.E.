@@ -18,22 +18,28 @@
 #include <memory>
 #include <string>
 #include <wrl.h>
+#include "../config/EngineConfig.hpp"
 
 ////////////////////////////////////
 // Class Declaration
 //----------------------------------
 class D3D11Renderer
 {
+	HWND m_hWnd;
+
 	BOOL m_bVsync;
 	BOOL m_bFullscreen;
+
 	FLOAT m_fScreenFar;
 	FLOAT m_fScreenNear;
-	HWND m_hWnd;
-	UINT m_iScreenWidth;
-	UINT m_iScreenHeight;
+
+	INT m_iDisplayWidth;
+	INT m_iDisplayHeight;
+
 	UINT m_uRefreshNum;
 	UINT m_uRefreshDen;
-	INT m_iAvailableVRAM;
+
+	SIZE_T m_iVideoMemoryMB;
 	std::string m_sVideoCardName;
 
 	Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;
@@ -47,7 +53,7 @@ class D3D11Renderer
 
 	Microsoft::WRL::ComPtr<IDXGISwapChain> m_pSwapChain;
 
-	// Should these be here?
+	// Should the renderer own these matrices? Something to think about...
 	DirectX::XMMATRIX m_orthoMatrix;
 	DirectX::XMMATRIX m_projectionMatrix;
 	DirectX::XMMATRIX m_worldMatrix;
@@ -59,8 +65,7 @@ public:
 	PVOID operator new(UINT uMemorySize);
 	VOID operator delete(PVOID pMemoryBlock);
 
-	BOOL Initialize(INT iScreenWidth, INT iScreenHeight, BOOL bVsync, 
-		            HWND hWnd, BOOL bFullscreen, FLOAT fScreenFar, FLOAT fScreenNear);
+	BOOL Initialize(HWND hWnd, CONST EngineConfig* pConfig);
 
 	VOID BeginScene(FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha);
 
@@ -73,6 +78,7 @@ public:
 	VOID GetProjectionMatrix(DirectX::XMMATRIX& projectionMatrix) CONST;
 	VOID GetWorldMatrix(DirectX::XMMATRIX& worldMatrix) CONST;
 
+	SIZE_T GetVideoMemoryMB() CONST;
 	VOID GetVideoCardName(std::string& videoCardName) CONST;
 
 private:
@@ -89,8 +95,10 @@ private:
 	BOOL InitializeDepthStencilBuffer();
 	BOOL InitializeSwapChain();
 
+	VOID SetDisplayDimensions(CONST EngineConfig* pCongig);
+
 	BOOL SetRefreshParams(IDXGIOutput* pAdapterOuput);
 
-	BOOL SetVideoCardName(IDXGIAdapter* pAdapter);
+	BOOL SetVideoCardInfo(IDXGIAdapter* pAdapter);
 };
 

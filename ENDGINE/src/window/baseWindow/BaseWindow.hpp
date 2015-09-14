@@ -14,7 +14,7 @@
 #include <string>
 #include <Windows.h>
 #include "../../interfaces/IMessageListener.hpp"
-#include "../../config/configObject/ConfigObject.hpp"
+#include "../../config/EngineConfig.hpp"
 
 ////////////////////////////////////////////////////////
 // Class Declaration
@@ -39,9 +39,9 @@ public:
 		                       LPCTSTR lpszMenuName, LPCTSTR lpszClassName, HICON hIconSm);
 	BOOL Register(CONST PWNDCLASSEX pWcex);
 
-	BOOL Create(const ConfigObject* pConfig, DWORD dwStyles = WS_OVERLAPPEDWINDOW | WS_VISIBLE);
+	BOOL Create(CONST EngineConfig* pConfig, DWORD dwStyles = WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME | WS_VISIBLE);
 	BOOL Create(BOOL bFullscreen, INT iWindowWidth = 800, INT iWindowHeight = 600, 
-		                          DWORD dwStyles = WS_OVERLAPPEDWINDOW | WS_VISIBLE);
+		                          DWORD dwStyles = WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME | WS_VISIBLE);
 
 	BOOL GetMessage(CONST PMSG pMessage) CONST;
 

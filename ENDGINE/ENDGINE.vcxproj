@@ -73,9 +73,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\renderer\Renderer.cpp" />
+    <ClCompile Include="src\config\configObject\JSONconfig.cpp" />
+    <ClCompile Include="src\config\configObject\XMLconfig.cpp" />
+    <ClCompile Include="src\config\EngineConfig.cpp" />
     <ClCompile Include="src\config\configObject\ConfigObject.cpp" />
-    <ClCompile Include="src\config\INIconfig.cpp" />
+    <ClCompile Include="src\config\configObject\INIconfig.cpp" />
     <ClCompile Include="src\rareInput\RareInput.cpp" />
     <ClCompile Include="src\rareInput\RareInputDevice.cpp" />
     <ClCompile Include="src\renderer\D3D11Renderer.cpp" />
@@ -84,9 +86,11 @@
     <ClCompile Include="src\winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\renderer\Renderer.hpp" />
+    <ClInclude Include="src\config\configObject\JSONconfig.hpp" />
+    <ClInclude Include="src\config\configObject\XMLconfig.hpp" />
+    <ClInclude Include="src\config\EngineConfig.hpp" />
     <ClInclude Include="src\config\configObject\ConfigObject.hpp" />
-    <ClInclude Include="src\config\INIconfig.hpp" />
+    <ClInclude Include="src\config\configObject\INIconfig.hpp" />
     <ClInclude Include="src\interfaces\IMessageListener.hpp" />
     <ClInclude Include="src\rareInput\RareInput.hpp" />
     <ClInclude Include="src\rareInput\RareInputDevice.hpp" />

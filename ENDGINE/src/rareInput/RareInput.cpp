@@ -208,8 +208,6 @@ VOID RareInput::ProcessRawInputMessages(LPARAM lParam)
 	// Thus, we use the mouse buffer size to accommodate both devices.
 	bufferSize = 40;
 	std::unique_ptr<BYTE[]> inputBuffer = std::make_unique<BYTE[]>(bufferSize);
-	if (!inputBuffer)
-		return; // CONSIDER IMPLEMENTING AN ERROR HANDLER?
 
 	// Write the captured Raw Input data to the buffer.
 	GetRawInputData((HRAWINPUT)lParam, RID_INPUT, (LPVOID)inputBuffer.get(), &bufferSize, sizeof(RAWINPUTHEADER));

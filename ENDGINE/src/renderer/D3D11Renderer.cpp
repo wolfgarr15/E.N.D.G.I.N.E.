@@ -32,8 +32,10 @@ D3D11Renderer::D3D11Renderer()
 
 D3D11Renderer::~D3D11Renderer()
 {
+	// Set the swap chain state to windowed before closing.
+	// Otherwise, errors occur with DXGI.
 	if (m_pSwapChain)
-		m_pSwapChain->SetFullscreenState(false, NULL);
+		m_pSwapChain->SetFullscreenState(FALSE, NULL);
 }
 
 PVOID D3D11Renderer::operator new(UINT uMemorySize)
@@ -51,21 +53,20 @@ VOID D3D11Renderer::operator delete(PVOID pMemoryBlock)
 	_aligned_free(pMemoryBlock);
 }
 
-BOOL D3D11Renderer::Initialize(INT iScreenWidth, INT iScreenHeight, BOOL bVsync,
-	                           HWND hWnd, BOOL bFullscreen, FLOAT fScreenFar, FLOAT fScreenNear)
+BOOL D3D11Renderer::Initialize(HWND hWnd, CONST EngineConfig* pConfig)
 {
 	Microsoft::WRL::ComPtr<IDXGIFactory> pFactory;
 	Microsoft::WRL::ComPtr<IDXGIAdapter> pAdapter;
 	Microsoft::WRL::ComPtr<IDXGIOutput> pAdapterOutput;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pBackBuffer;
 
-	m_bVsync = bVsync;
-	m_bFullscreen = bFullscreen;
-	m_fScreenFar = fScreenFar;
-	m_fScreenNear = fScreenNear;
 	m_hWnd = hWnd;
-	m_iScreenWidth = iScreenWidth;
-	m_iScreenHeight = iScreenHeight;
+	m_bVsync = pConfig->UseVsync();
+	m_bFullscreen = pConfig->IsFullscreen();
+	m_fScreenFar = pConfig->GetScreenFar();
+	m_fScreenNear = pConfig->GetScreenNear();
+
+	SetDisplayDimensions(pConfig);
 
 	RETURN_IF_FAILS(CreateDXGIFactory(__uuidof(IDXGIFactory), &pFactory));
 
@@ -73,7 +74,7 @@ BOOL D3D11Renderer::Initialize(INT iScreenWidth, INT iScreenHeight, BOOL bVsync,
 	//       investigate multi-GPU initialization if it is to be a feature.
 	RETURN_IF_FAILS(pFactory->EnumAdapters(0, &pAdapter));
 
-	RETURN_IF_FAILS(SetVideoCardName(pAdapter.Get()));
+	RETURN_IF_FAILS(SetVideoCardInfo(pAdapter.Get()));
 
 	// NOTE: As with the adapter enumeration, this is currently
 	//       coded to utilize only one adapter output.
@@ -115,7 +116,6 @@ VOID D3D11Renderer::BeginScene(FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha)
 
 VOID D3D11Renderer::EndScene()
 {
-	// Present the back buffer to the screen since rendering is complete.
 	if (m_bVsync)
 	{
 		// Lock to screen refresh rate.
@@ -153,6 +153,11 @@ VOID D3D11Renderer::GetWorldMatrix(DirectX::XMMATRIX& worldMatrix) CONST
 	worldMatrix = m_worldMatrix;
 }
 
+SIZE_T D3D11Renderer::GetVideoMemoryMB() CONST
+{
+	return m_iVideoMemoryMB;
+}
+
 VOID D3D11Renderer::GetVideoCardName(std::string& videoCardName) CONST
 {
 	videoCardName = m_sVideoCardName;
@@ -160,8 +165,8 @@ VOID D3D11Renderer::GetVideoCardName(std::string& videoCardName) CONST
 
 VOID D3D11Renderer::IntializeOrthoMatrix()
 {
-	m_orthoMatrix = DirectX::XMMatrixOrthographicLH((FLOAT)m_iScreenWidth, 
-													(FLOAT)m_iScreenHeight, 
+	m_orthoMatrix = DirectX::XMMatrixOrthographicLH((FLOAT)m_iDisplayWidth, 
+													(FLOAT)m_iDisplayHeight, 
 						                            m_fScreenNear, 
 													m_fScreenFar);
 }
@@ -175,10 +180,10 @@ VOID D3D11Renderer::InitializeProjectionMatrix()
 {
 	// Setup the projection matrix.
 	FLOAT fieldOfView = DirectX::XM_PI / 4.0f;
-	FLOAT screenAspect = (FLOAT)m_iScreenWidth / (FLOAT)m_iScreenHeight;
+	FLOAT displayAspect = (FLOAT)m_iDisplayWidth / (FLOAT)m_iDisplayHeight;
 
 	// Create the projection matrix for 3D rendering.
-	m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(fieldOfView, screenAspect, m_fScreenNear, m_fScreenFar);
+	m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(fieldOfView, displayAspect, m_fScreenNear, m_fScreenFar);
 }
 
 VOID D3D11Renderer::InitializeViewPort()
@@ -187,8 +192,8 @@ VOID D3D11Renderer::InitializeViewPort()
 	SecureZeroMemory(&viewPort, sizeof(D3D11_VIEWPORT));
 
 	// Setup the viewport for rendering.
-	viewPort.Width = (FLOAT)m_iScreenWidth;
-	viewPort.Height = (FLOAT)m_iScreenHeight;
+	viewPort.Width = (FLOAT)m_iDisplayWidth;
+	viewPort.Height = (FLOAT)m_iDisplayHeight;
 	viewPort.MinDepth = 0.0f;
 	viewPort.MaxDepth = 1.0f;
 	viewPort.TopLeftX = 0.0f;
@@ -287,8 +292,8 @@ BOOL D3D11Renderer::InitializeDepthStencilBuffer()
 	ZeroMemory(&depthBufferDesc, sizeof(D3D11_TEXTURE2D_DESC));
 
 	// Set up the description of the depth buffer.
-	depthBufferDesc.Width = m_iScreenWidth;
-	depthBufferDesc.Height = m_iScreenHeight;
+	depthBufferDesc.Width = m_iDisplayWidth;
+	depthBufferDesc.Height = m_iDisplayHeight;
 	depthBufferDesc.MipLevels = 1;
 	depthBufferDesc.ArraySize = 1;
 	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -315,8 +320,8 @@ BOOL D3D11Renderer::InitializeSwapChain()
 	swapChainDesc.BufferCount = 1;
 
 	// Set the width and height based on the screen.
-	swapChainDesc.BufferDesc.Width = m_iScreenWidth;
-	swapChainDesc.BufferDesc.Height = m_iScreenHeight;
+	swapChainDesc.BufferDesc.Width = m_iDisplayWidth;
+	swapChainDesc.BufferDesc.Height = m_iDisplayHeight;
 
 	// Set the back buffer to a regular 32-bit format.
 	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -369,6 +374,22 @@ BOOL D3D11Renderer::InitializeSwapChain()
 	return TRUE;
 }
 
+VOID D3D11Renderer::SetDisplayDimensions(CONST EngineConfig* pConfig)
+{
+	if (m_bFullscreen)
+	{
+		// Use the max system display dimensions.
+		m_iDisplayWidth = GetSystemMetrics(SM_CXSCREEN);
+		m_iDisplayHeight = GetSystemMetrics(SM_CYSCREEN);
+	}
+	else
+	{
+		// Use configuration display dimesnions.
+		m_iDisplayWidth = pConfig->GetWindowWidth();
+		m_iDisplayHeight = pConfig->GetWindowHeight();
+	}
+}
+
 BOOL D3D11Renderer::SetRefreshParams(IDXGIOutput* pAdapterOutput)
 {
 	
@@ -387,11 +408,11 @@ BOOL D3D11Renderer::SetRefreshParams(IDXGIOutput* pAdapterOutput)
 	RETURN_IF_FAILS(pAdapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, pDisplayModeList.get()));
 
 	// Find the display mode that matches the screen width and height,
-	// and store the corresponding refrech rate numerator and denominator.
+	// and store the corresponding refresh rate numerator and denominator.
 	for (UINT i = 0; i < numModes; i++)
 	{
-		if (pDisplayModeList[i].Width == (UINT)m_iScreenWidth
-			&& pDisplayModeList[i].Height == (UINT)m_iScreenHeight)
+		if (pDisplayModeList[i].Width == (UINT)m_iDisplayWidth
+			&& pDisplayModeList[i].Height == (UINT)m_iDisplayHeight)
 		{
 			m_uRefreshNum = pDisplayModeList[i].RefreshRate.Numerator;
 			m_uRefreshDen = pDisplayModeList[i].RefreshRate.Denominator;
@@ -401,17 +422,22 @@ BOOL D3D11Renderer::SetRefreshParams(IDXGIOutput* pAdapterOutput)
 	return TRUE;
 }
 
-BOOL D3D11Renderer::SetVideoCardName(IDXGIAdapter* pAdapter)
+BOOL D3D11Renderer::SetVideoCardInfo(IDXGIAdapter* pAdapter)
 {
 	DXGI_ADAPTER_DESC adapterDesc;
-	char pString[128];
+	char tmpString[128];
 	UINT stringLength;
 
 	RETURN_IF_FAILS(pAdapter->GetDesc(&adapterDesc));
-	if (wcstombs_s(&stringLength, pString, 128, adapterDesc.Description, 128))
+
+	m_iVideoMemoryMB = adapterDesc.DedicatedVideoMemory / 1024 / 1024;
+
+	// The adapter.Description member is type wchar[128].
+	// This must be converted to char[128] to store as std::string.
+	if (wcstombs_s(&stringLength, tmpString, 128, adapterDesc.Description, 128))
 		return FALSE;
 
-	m_sVideoCardName = std::string(pString);
+	m_sVideoCardName = std::string(tmpString);
 
 	return TRUE;
 }

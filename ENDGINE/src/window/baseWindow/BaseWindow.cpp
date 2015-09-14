@@ -74,11 +74,11 @@ BOOL BaseWindow::Register(CONST PWNDCLASSEX pWcex)
 	return RegisterClassEx(pWcex);
 }
 
-BOOL BaseWindow::Create(const ConfigObject* pConfig, DWORD dwStyles)
+BOOL BaseWindow::Create(CONST EngineConfig* pConfig, DWORD dwStyles)
 {
-	return Create(pConfig->GetValue<BOOL>("Window.bFullscreen"),
-		          pConfig->GetValue<INT>("Window.iWidth"),
-		          pConfig->GetValue<INT>("Window.iHeight"),
+	return Create(pConfig->IsFullscreen(),
+		          pConfig->GetWindowWidth(),
+		          pConfig->GetWindowHeight(),
 				  dwStyles);
 }
 
