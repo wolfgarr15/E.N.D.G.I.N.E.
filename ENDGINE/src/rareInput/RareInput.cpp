@@ -13,7 +13,7 @@
 RareInput::RareInput()
 {
 	// Initialize keyboard and mouse button states.
-	for (auto i = 0; i < NUMKEYBOARDKEYS; i++)
+	for (int i = 0; i < NUMKEYBOARDKEYS; i++)
 	{
 		m_keys[i] = false;
 
