@@ -7,17 +7,12 @@
 //-------------------------------------------------------------
 #include "D3D11Renderer.hpp"
 
-///////////////////////////////////////////////////////////////
-// Helper Macro Definitions
-//------------------------------------------------------------
-#define RETURN_IF_FAILS(hResult) if(FAILED(hResult)) { return FALSE; }
-#define RETURN_IF_FALSE(bResult) if(bResult == FALSE) { return FALSE; }
-
 ///////////////////////////////////////////////////////////////////
 // Class Definition
 //-----------------------------------------------------------------
 D3D11Renderer::D3D11Renderer()
-	: m_pDevice(nullptr),
+	: m_hWnd(NULL),
+	  m_pDevice(nullptr),
 	  m_pDeviceContext(nullptr),
 	  m_pDepthStencilBuffer(nullptr),
 	  m_pDepthStencilState(nullptr),
@@ -441,9 +436,3 @@ BOOL D3D11Renderer::SetVideoCardInfo(IDXGIAdapter* pAdapter)
 
 	return TRUE;
 }
-
-///////////////////////////////////////////////////////////////
-// Helper Macro Undefs
-//------------------------------------------------------------
-#undef RETURN_IF_FAILS
-#undef RETURN_IF_FALSE

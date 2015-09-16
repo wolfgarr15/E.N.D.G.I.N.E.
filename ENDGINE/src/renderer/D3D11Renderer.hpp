@@ -18,7 +18,8 @@
 #include <memory>
 #include <string>
 #include <wrl.h>
-#include "../config/EngineConfig.hpp"
+#include "..\globals\macros.h"
+#include "..\config\EngineConfig.hpp"
 
 ////////////////////////////////////
 // Class Declaration

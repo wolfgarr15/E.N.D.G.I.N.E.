@@ -6,14 +6,13 @@
 // Pre-processor Directives
 //------------------------------
 #pragma once
-#define WIN32_LEAN_AND_MEAN
 
 ///////////////////////////////
 // Include Headers
 //-----------------------------
 #include <memory>
-#include <Windows.h>
-#include "../interfaces/IMessageListener.hpp"
+#include "..\globals\LeanWindows.h"
+#include "..\interfaces\IMessageListener.hpp"
 #include "RareInputDevice.hpp"
 
 ///////////////////////////////////////////
@@ -22,7 +21,7 @@
 static const UINT NUMMOUSEBUTTONS = 5;
 static const UINT NUMKEYBOARDKEYS = 256;
 
-static const enum RIMOUSE
+static const enum RAREMBUTTON
 {
 	LEFTBUTTON,
 	RIGHTBUTTON,

@@ -52,6 +52,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(BOOST_ROOT);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -65,6 +67,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(BOOST_ROOT);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -81,7 +85,7 @@
     <ClCompile Include="src\rareInput\RareInput.cpp" />
     <ClCompile Include="src\rareInput\RareInputDevice.cpp" />
     <ClCompile Include="src\renderer\D3D11Renderer.cpp" />
-    <ClCompile Include="src\window\baseWindow\BaseWindow.cpp" />
+    <ClCompile Include="src\window\BaseWindow.cpp" />
     <ClCompile Include="src\window\MainWindow.cpp" />
     <ClCompile Include="src\winmain.cpp" />
   </ItemGroup>
@@ -91,10 +95,13 @@
     <ClInclude Include="src\config\EngineConfig.hpp" />
     <ClInclude Include="src\config\configObject\ConfigObject.hpp" />
     <ClInclude Include="src\config\configObject\INIconfig.hpp" />
+    <ClInclude Include="src\globals\LeanWindows.h" />
+    <ClInclude Include="src\globals\macros.h" />
     <ClInclude Include="src\interfaces\IMessageListener.hpp" />
     <ClInclude Include="src\rareInput\RareInput.hpp" />
     <ClInclude Include="src\rareInput\RareInputDevice.hpp" />
     <ClInclude Include="src\renderer\D3D11Renderer.hpp" />
+    <ClInclude Include="src\window\BaseWindow.hpp" />
     <ClInclude Include="src\window\baseWindow\BaseWindow.hpp" />
     <ClInclude Include="src\window\MainWindow.hpp" />
   </ItemGroup>

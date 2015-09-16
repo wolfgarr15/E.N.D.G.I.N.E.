@@ -13,7 +13,7 @@
 RareInput::RareInput()
 {
 	// Initialize keyboard and mouse button states.
-	for (auto i = 0; i < NUMKEYBOARDKEYS; i++)
+	for (int i = 0; i < NUMKEYBOARDKEYS; i++)
 	{
 		m_keys[i] = false;
 
@@ -132,41 +132,41 @@ VOID RareInput::ProcessMouseInput(CONST PBYTE buffer)
 
 	// Update left mouse button state.
 	if (mouse.ulButtons & RI_MOUSE_LEFT_BUTTON_DOWN)
-		m_mouseButtons[RIMOUSE::LEFTBUTTON] = true;
+		m_mouseButtons[RAREMBUTTON::LEFTBUTTON] = true;
 
 	if (mouse.ulButtons & RI_MOUSE_LEFT_BUTTON_UP)
-		m_mouseButtons[RIMOUSE::LEFTBUTTON] = false;
+		m_mouseButtons[RAREMBUTTON::LEFTBUTTON] = false;
 
 	// Update the right mouse button state.
 	if (mouse.ulButtons & RI_MOUSE_RIGHT_BUTTON_DOWN)
-		m_mouseButtons[RIMOUSE::RIGHTBUTTON] = true;
+		m_mouseButtons[RAREMBUTTON::RIGHTBUTTON] = true;
 
 	if (mouse.ulButtons & RI_MOUSE_RIGHT_BUTTON_UP)
-		m_mouseButtons[RIMOUSE::RIGHTBUTTON] = false;
+		m_mouseButtons[RAREMBUTTON::RIGHTBUTTON] = false;
 
 	// Update the middle mouse button.
 	if (mouse.ulButtons & RI_MOUSE_MIDDLE_BUTTON_DOWN)
-		m_mouseButtons[RIMOUSE::MIDDLEBUTTON] = true;
+		m_mouseButtons[RAREMBUTTON::MIDDLEBUTTON] = true;
 
 	if (mouse.ulButtons & RI_MOUSE_MIDDLE_BUTTON_UP)
-		m_mouseButtons[RIMOUSE::MIDDLEBUTTON] = false;
+		m_mouseButtons[RAREMBUTTON::MIDDLEBUTTON] = false;
 
 	// Note: RI_MOUSE_BUTTON1, 2, and 3 are the same as the 
 	//       left, right, and middle buttons, respectively.
 
 	// Update other mouse button 1.
 	if (mouse.ulButtons & RI_MOUSE_BUTTON_4_DOWN)
-		m_mouseButtons[RIMOUSE::OTHERBUTTON1] = true;
+		m_mouseButtons[RAREMBUTTON::OTHERBUTTON1] = true;
 
 	if (mouse.ulButtons & RI_MOUSE_BUTTON_4_UP)
-		m_mouseButtons[RIMOUSE::OTHERBUTTON1] = false;
+		m_mouseButtons[RAREMBUTTON::OTHERBUTTON1] = false;
 
 	// Update other mouse button 2.
 	if (mouse.ulButtons & RI_MOUSE_BUTTON_5_DOWN)
-		m_mouseButtons[RIMOUSE::OTHERBUTTON2] = true;
+		m_mouseButtons[RAREMBUTTON::OTHERBUTTON2] = true;
 
 	if (mouse.ulButtons & RI_MOUSE_BUTTON_5_UP)
-		m_mouseButtons[RIMOUSE::OTHERBUTTON2] = false;
+		m_mouseButtons[RAREMBUTTON::OTHERBUTTON2] = false;
 }
 
 VOID RareInput::ProcessKeyboardInput(CONST PBYTE buffer)
@@ -197,16 +197,11 @@ VOID RareInput::ProcessKeyboardInput(CONST PBYTE buffer)
 
 VOID RareInput::ProcessRawInputMessages(LPARAM lParam)
 {
-	// Check that the captured input data is not larger than 40 bytes.
+	// Determine the size of the raw input data.
 	UINT bufferSize = 0;
 	GetRawInputData((HRAWINPUT)lParam, RID_INPUT, NULL, &bufferSize, sizeof(RAWINPUTHEADER));
-	if ((bufferSize <= 0) || (bufferSize > 40))
-		return; // CONSIDER IMPLEMENTING AN ERROR HANDLER?
 
-	// Use a static sized buffer, since memory allocation in each input cycle would impact performance.
-	// Mouse RawInput data is 40 bytes, and Keyboard input data is 32 bytes.
-	// Thus, we use the mouse buffer size to accommodate both devices.
-	bufferSize = 40;
+	// Create the input buffer for processing HID input.
 	std::unique_ptr<BYTE[]> inputBuffer = std::make_unique<BYTE[]>(bufferSize);
 
 	// Write the captured Raw Input data to the buffer.
