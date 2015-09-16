@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{1F049C86-21C6-4389-BE88-162CF1BAE811}</ProjectGuid>
+    <ProjectGuid>{75BF775E-443C-466F-9767-4F777CA09778}</ProjectGuid>
     <RootNamespace>ENDGINE</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -39,12 +39,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>bin\$(Configuration)\</OutDir>
-    <IntDir>build\$(Configuration)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>bin\$(Configuration)\</OutDir>
-    <IntDir>build\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)\bin\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\build\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -52,8 +48,6 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(BOOST_ROOT);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -66,9 +60,6 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(BOOST_ROOT);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -77,11 +68,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\config\configObject\ConfigObject.cpp" />
+    <ClCompile Include="src\config\configObject\INIconfig.cpp" />
     <ClCompile Include="src\config\configObject\JSONconfig.cpp" />
     <ClCompile Include="src\config\configObject\XMLconfig.cpp" />
     <ClCompile Include="src\config\EngineConfig.cpp" />
-    <ClCompile Include="src\config\configObject\ConfigObject.cpp" />
-    <ClCompile Include="src\config\configObject\INIconfig.cpp" />
     <ClCompile Include="src\rareInput\RareInput.cpp" />
     <ClCompile Include="src\rareInput\RareInputDevice.cpp" />
     <ClCompile Include="src\renderer\D3D11Renderer.cpp" />
@@ -90,11 +81,11 @@
     <ClCompile Include="src\winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\config\configObject\ConfigObject.hpp" />
+    <ClInclude Include="src\config\configObject\INIconfig.hpp" />
     <ClInclude Include="src\config\configObject\JSONconfig.hpp" />
     <ClInclude Include="src\config\configObject\XMLconfig.hpp" />
     <ClInclude Include="src\config\EngineConfig.hpp" />
-    <ClInclude Include="src\config\configObject\ConfigObject.hpp" />
-    <ClInclude Include="src\config\configObject\INIconfig.hpp" />
     <ClInclude Include="src\globals\LeanWindows.h" />
     <ClInclude Include="src\globals\macros.h" />
     <ClInclude Include="src\interfaces\IMessageListener.hpp" />
@@ -102,7 +93,6 @@
     <ClInclude Include="src\rareInput\RareInputDevice.hpp" />
     <ClInclude Include="src\renderer\D3D11Renderer.hpp" />
     <ClInclude Include="src\window\BaseWindow.hpp" />
-    <ClInclude Include="src\window\baseWindow\BaseWindow.hpp" />
     <ClInclude Include="src\window\MainWindow.hpp" />
   </ItemGroup>
   <ItemGroup>
