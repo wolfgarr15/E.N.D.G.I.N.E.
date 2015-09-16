@@ -58,9 +58,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 		if (msg.message == WM_QUIT || inputHandler.IsKeyDown(VK_ESCAPE))
 			done = true;
 
-		fout << "Mouse X: " << inputHandler.GetMouseX() << std::endl
-			 << "Mouse Y: " << inputHandler.GetMouseY() << std::endl;
-
 		DX11.EndScene();
 	}
 
