@@ -18,6 +18,7 @@
 #include <memory>
 #include <string>
 #include <wrl.h>
+#include "..\globals\functions.hpp"
 #include "..\globals\macros.h"
 #include "..\config\EngineConfig.hpp"
 

@@ -86,6 +86,7 @@
     <ClInclude Include="src\config\configObject\JSONconfig.hpp" />
     <ClInclude Include="src\config\configObject\XMLconfig.hpp" />
     <ClInclude Include="src\config\EngineConfig.hpp" />
+    <ClInclude Include="src\globals\functions.hpp" />
     <ClInclude Include="src\globals\LeanWindows.h" />
     <ClInclude Include="src\globals\macros.h" />
     <ClInclude Include="src\interfaces\IMessageListener.hpp" />

@@ -420,19 +420,12 @@ BOOL D3D11Renderer::SetRefreshParams(IDXGIOutput* pAdapterOutput)
 BOOL D3D11Renderer::SetVideoCardInfo(IDXGIAdapter* pAdapter)
 {
 	DXGI_ADAPTER_DESC adapterDesc;
-	char tmpString[128];
-	UINT stringLength;
 
 	RETURN_IF_FAILS(pAdapter->GetDesc(&adapterDesc));
 
 	m_iVideoMemoryMB = adapterDesc.DedicatedVideoMemory / 1024 / 1024;
 
-	// The adapter.Description member is type wchar[128].
-	// This must be converted to char[128] to store as std::string.
-	if (wcstombs_s(&stringLength, tmpString, 128, adapterDesc.Description, 128))
-		return FALSE;
+	std::wstring tmp(adapterDesc.Description);
 
-	m_sVideoCardName = std::string(tmpString);
-
-	return TRUE;
+	return Convert::WstringToString(tmp, m_sVideoCardName);
 }
