@@ -425,7 +425,7 @@ BOOL D3D11Renderer::SetVideoCardInfo(IDXGIAdapter* pAdapter)
 
 	m_iVideoMemoryMB = adapterDesc.DedicatedVideoMemory / 1024 / 1024;
 
-	std::wstring tmp(adapterDesc.Description);
+	m_sVideoCardName = Convert::Wc_strToString(adapterDesc.Description);
 
-	return Convert::WstringToString(tmp, m_sVideoCardName);
+	return TRUE;
 }
