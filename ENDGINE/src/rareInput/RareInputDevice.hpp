@@ -6,22 +6,21 @@
 // Pre-processor Directives
 //------------------------------
 #pragma once
-#define WIN32_LEAN_AND_MEAN
 
 ///////////////////////////////
 // Include Headers
 //-----------------------------
-#include <Windows.h>
 #include <vector>
+#include "..\globals\LeanWindows.h"
 
 ///////////////////////////////
 // Static Enumerator
 //-----------------------------
-static const enum RIUSEDEFAULT
+static const enum RAREDEVICE
 {
-	KEYBOARD,
-	MOUSE,
-	DEVICES,
+	KEYBOARDONLY,
+	MOUSEONLY,
+	KBMOUSE,
 	NONE
 };
 
@@ -33,7 +32,7 @@ class RareInputDevice
 	std::vector<RAWINPUTDEVICE> m_rawInputDevices;
 
 public:
-	RareInputDevice(CONST RIUSEDEFAULT defaultDevices = NONE);
+	RareInputDevice(RAREDEVICE defaultDevices = NONE);
 	~RareInputDevice() = default;
 
 	VOID AddDevice(USHORT usUsagePage, USHORT usUsage, DWORD dwFlags, HWND hWndTarget);

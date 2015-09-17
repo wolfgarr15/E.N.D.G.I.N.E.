@@ -6,15 +6,14 @@
 // Preprocessor Directives
 //------------------------------------------------------
 #pragma once
-#define WIN32_LEAN_AND_MEAN
 
 /////////////////////////////////////////////////////////
 // Header Includes
 //-------------------------------------------------------
 #include <string>
-#include <Windows.h>
-#include "../../interfaces/IMessageListener.hpp"
-#include "../../config/EngineConfig.hpp"
+#include "..\globals\LeanWindows.h"
+#include "..\interfaces\IMessageListener.hpp"
+#include "..\config\EngineConfig.hpp"
 
 ////////////////////////////////////////////////////////
 // Class Declaration

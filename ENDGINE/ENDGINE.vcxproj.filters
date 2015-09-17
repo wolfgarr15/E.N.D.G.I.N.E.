@@ -18,28 +18,7 @@
     <ClCompile Include="src\config\configObject\ConfigObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rareInput\RareInput.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\rareInput\RareInputDevice.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\window\baseWindow\BaseWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\window\MainWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\winmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\renderer\D3D11Renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\config\configObject\INIconfig.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\config\EngineConfig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\config\configObject\JSONconfig.cpp">
@@ -48,9 +27,45 @@
     <ClCompile Include="src\config\configObject\XMLconfig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\config\EngineConfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rareInput\RareInput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rareInput\RareInputDevice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer\D3D11Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window\BaseWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window\MainWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\winmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\config\configObject\ConfigObject.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\config\configObject\INIconfig.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\config\configObject\JSONconfig.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\config\configObject\XMLconfig.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\config\EngineConfig.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\globals\LeanWindows.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\interfaces\IMessageListener.hpp">
@@ -62,25 +77,19 @@
     <ClInclude Include="src\rareInput\RareInputDevice.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\window\baseWindow\BaseWindow.hpp">
+    <ClInclude Include="src\renderer\D3D11Renderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\window\BaseWindow.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\window\MainWindow.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\D3D11Renderer.hpp">
+    <ClInclude Include="src\globals\macros.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\config\configObject\INIconfig.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\config\EngineConfig.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\config\configObject\JSONconfig.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\config\configObject\XMLconfig.hpp">
+    <ClInclude Include="src\globals\functions.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

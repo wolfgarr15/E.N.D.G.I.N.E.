@@ -6,17 +6,16 @@
 // Preprocessor Directives
 //-----------------------------------
 #pragma once
-#define WIN32_LEAN_AND_MEAN
 
 /////////////////////////////////////
 // Includes
 //-----------------------------------
 #include <fstream>
-#include <Windows.h>
-#include "config/EngineConfig.hpp"
-#include "window/MainWindow.hpp"
-#include "rareInput/RareInput.hpp"
-#include "renderer/D3D11Renderer.hpp"
+#include "globals\LeanWindows.h"
+#include "config\EngineConfig.hpp"
+#include "window\MainWindow.hpp"
+#include "rareInput\RareInput.hpp"
+#include "renderer\D3D11Renderer.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Main Application Entry (NOTE: This is a test program!)
@@ -35,7 +34,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 
 	// Create the input handler and set it to listen to the window.
 	RareInput inputHandler;
-	inputHandler.Initialize(window.GetHandle(), RIUSEDEFAULT::DEVICES);
+	inputHandler.Initialize(window.GetHandle(), RAREDEVICE::KBMOUSE);
 	window.SetListener(&inputHandler);
 
 	// Create and initialize the DX11 renderer.
@@ -58,9 +57,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 		window.GetMessage(&msg);
 		if (msg.message == WM_QUIT || inputHandler.IsKeyDown(VK_ESCAPE))
 			done = true;
-
-		fout << "Mouse X: " << inputHandler.GetMouseX() << std::endl
-			 << "Mouse Y: " << inputHandler.GetMouseY() << std::endl;
 
 		DX11.EndScene();
 	}

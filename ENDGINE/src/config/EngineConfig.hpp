@@ -6,12 +6,11 @@
 // Pre-processor Directives
 //------------------------------
 #pragma once
-#define WIN32_LEAN_AND_MEAN
 
 ///////////////////////////////
 // Include Headers
 //-----------------------------
-#include <Windows.h>
+#include "..\globals\LeanWindows.h"
 #include "configObject\INIconfig.hpp"
 
 ////////////////////////////////////

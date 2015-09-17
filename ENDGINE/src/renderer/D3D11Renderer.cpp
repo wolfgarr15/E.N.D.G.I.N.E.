@@ -7,17 +7,12 @@
 //-------------------------------------------------------------
 #include "D3D11Renderer.hpp"
 
-///////////////////////////////////////////////////////////////
-// Helper Macro Definitions
-//------------------------------------------------------------
-#define RETURN_IF_FAILS(hResult) if(FAILED(hResult)) { return FALSE; }
-#define RETURN_IF_FALSE(bResult) if(bResult == FALSE) { return FALSE; }
-
 ///////////////////////////////////////////////////////////////////
 // Class Definition
 //-----------------------------------------------------------------
 D3D11Renderer::D3D11Renderer()
-	: m_pDevice(nullptr),
+	: m_hWnd(NULL),
+	  m_pDevice(nullptr),
 	  m_pDeviceContext(nullptr),
 	  m_pDepthStencilBuffer(nullptr),
 	  m_pDepthStencilState(nullptr),
@@ -425,25 +420,12 @@ BOOL D3D11Renderer::SetRefreshParams(IDXGIOutput* pAdapterOutput)
 BOOL D3D11Renderer::SetVideoCardInfo(IDXGIAdapter* pAdapter)
 {
 	DXGI_ADAPTER_DESC adapterDesc;
-	char tmpString[128];
-	UINT stringLength;
 
 	RETURN_IF_FAILS(pAdapter->GetDesc(&adapterDesc));
 
 	m_iVideoMemoryMB = adapterDesc.DedicatedVideoMemory / 1024 / 1024;
 
-	// The adapter.Description member is type wchar[128].
-	// This must be converted to char[128] to store as std::string.
-	if (wcstombs_s(&stringLength, tmpString, 128, adapterDesc.Description, 128))
-		return FALSE;
-
-	m_sVideoCardName = std::string(tmpString);
+	m_sVideoCardName = Convert::Wc_strToString(adapterDesc.Description);
 
 	return TRUE;
 }
-
-///////////////////////////////////////////////////////////////
-// Helper Macro Undefs
-//------------------------------------------------------------
-#undef RETURN_IF_FAILS
-#undef RETURN_IF_FALSE

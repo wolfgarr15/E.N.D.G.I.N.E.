@@ -10,7 +10,7 @@
 ///////////////////////////////////////////////////////////////////
 // Class Definition
 //-----------------------------------------------------------------
-RareInputDevice::RareInputDevice(CONST RIUSEDEFAULT defaultDevices)
+RareInputDevice::RareInputDevice(RAREDEVICE defaultDevices)
 {
 	RAWINPUTDEVICE defaultKeyboard = { 1, 6, 0, NULL };
 	RAWINPUTDEVICE defaultMouse = { 1, 2, 0, NULL };
@@ -20,19 +20,19 @@ RareInputDevice::RareInputDevice(CONST RIUSEDEFAULT defaultDevices)
 		case NONE:
 			break;
 
-		case KEYBOARD:
+		case KEYBOARDONLY:
 		{
 			AddDevice(defaultKeyboard);
 			break;
 		}
 
-		case MOUSE:
+		case MOUSEONLY:
 		{
 			AddDevice(defaultMouse);
 			break;
 		}
 
-		case DEVICES:
+		case KBMOUSE:
 		{
 			AddDevice(defaultKeyboard);
 			AddDevice(defaultMouse);
