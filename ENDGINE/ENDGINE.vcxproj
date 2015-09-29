@@ -51,6 +51,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -68,6 +69,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\camera\Camera.cpp" />
     <ClCompile Include="src\config\configObject\ConfigObject.cpp" />
     <ClCompile Include="src\config\configObject\INIconfig.cpp" />
     <ClCompile Include="src\config\configObject\JSONconfig.cpp" />
@@ -81,6 +83,7 @@
     <ClCompile Include="src\winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\camera\Camera.hpp" />
     <ClInclude Include="src\config\configObject\ConfigObject.hpp" />
     <ClInclude Include="src\config\configObject\INIconfig.hpp" />
     <ClInclude Include="src\config\configObject\JSONconfig.hpp" />

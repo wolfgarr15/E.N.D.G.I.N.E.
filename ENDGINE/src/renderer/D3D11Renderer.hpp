@@ -1,5 +1,7 @@
 ///////////////////////////////////
 // Filename: D3D11Renderer.hpp
+//
+// Author: Wolfe S. Greene
 ///////////////////////////////////
 
 ////////////////////////////////
@@ -97,7 +99,7 @@ private:
 	BOOL InitializeDepthStencilBuffer();
 	BOOL InitializeSwapChain();
 
-	VOID SetDisplayDimensions(CONST EngineConfig* pCongig);
+	VOID SetDisplayDimensions(CONST EngineConfig* pConfig);
 
 	BOOL SetRefreshParams(IDXGIOutput* pAdapterOuput);
 

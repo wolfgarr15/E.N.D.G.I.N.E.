@@ -16,6 +16,7 @@
 #include "window\MainWindow.hpp"
 #include "rareInput\RareInput.hpp"
 #include "renderer\D3D11Renderer.hpp"
+#include "camera\Camera.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Main Application Entry (NOTE: This is a test program!)
@@ -40,6 +41,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 	// Create and initialize the DX11 renderer.
 	D3D11Renderer DX11;
 	DX11.Initialize(window.GetHandle(), &config);
+
+	Camera camera;
 
 	// Eveything else below is rando test code.
 	//---------------------------------------------------------

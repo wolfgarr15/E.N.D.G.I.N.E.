@@ -1,5 +1,7 @@
 ///////////////////////////////////
 // Filename: D3D11Renderer.cpp
+//
+// Author: Wolfe S. Greene
 ///////////////////////////////////
 
 ////////////////////////////////////////////////////////////////
@@ -69,7 +71,7 @@ BOOL D3D11Renderer::Initialize(HWND hWnd, CONST EngineConfig* pConfig)
 	//       investigate multi-GPU initialization if it is to be a feature.
 	RETURN_IF_FAILS(pFactory->EnumAdapters(0, &pAdapter));
 
-	RETURN_IF_FAILS(SetVideoCardInfo(pAdapter.Get()));
+	RETURN_IF_FALSE(SetVideoCardInfo(pAdapter.Get()));
 
 	// NOTE: As with the adapter enumeration, this is currently
 	//       coded to utilize only one adapter output.
@@ -114,12 +116,12 @@ VOID D3D11Renderer::EndScene()
 	if (m_bVsync)
 	{
 		// Lock to screen refresh rate.
-		m_pSwapChain->Present(1, 0);
+		m_pSwapChain->Present(TRUE, NULL);
 	}
 	else
 	{
 		// Present as fast as possible.
-		m_pSwapChain->Present(0, 0);
+		m_pSwapChain->Present(FALSE, NULL);
 	}
 }
 
@@ -389,7 +391,7 @@ BOOL D3D11Renderer::SetRefreshParams(IDXGIOutput* pAdapterOutput)
 {
 	
 	std::unique_ptr<DXGI_MODE_DESC[]> pDisplayModeList;
-	UINT numModes;
+	UINT numModes = 0;
 
 	// Get the number of display modes.
 	//
