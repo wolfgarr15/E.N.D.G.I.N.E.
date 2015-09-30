@@ -16,6 +16,7 @@
 #include <sstream>
 #include <vector>
 #include <boost/algorithm/string.hpp>
+#include <wrl.h>
 
 #include "./texture/texture.hpp"
 
@@ -30,12 +31,13 @@ private:
 
 /* Private member variables */
 private:
-	ID3D11Device* m_device;
-	ID3D11DeviceContext* m_context;
-	ID3D11Buffer *m_vertices, *m_indices;
+	Microsoft::WRL::ComPtr<ID3D11Device> m_device;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_context;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_vertices;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_indices;
 	int m_vertexCount;
-	Texture* m_texture;
-	Vertex* m_model;
+	Microsoft::WRL::ComPtr<Texture> m_texture;
+	Microsoft::WRL::ComPtr<Vertex> m_model;
 
 /* Private enumerations */
 private:
@@ -63,16 +65,15 @@ public:
 	Model(const Model&);
 	~Model();
 
-	bool Initialize(ID3D11Device*, ID3D11DeviceContext*);
-	void Release(); // Aliases `void Unload()` inside
+	bool Initialize(Microsoft::WRL::ComPtr<ID3D11Device>, Microsoft::WRL::ComPtr<ID3D11DeviceContext>);
 	void Render();
-	void Render(ID3D11DeviceContext*);
+	void Render(Microsoft::WRL::ComPtr<ID3D11DeviceContext>);
 
 	// Dual-file load methods for model formats that don't contain references to their own textures
 	// Methods for the lazy who don't initialize the object beforehand
-	bool Load(ID3D11Device*, ID3D11DeviceContext*, WCHAR*, WCHAR*);
-	bool Load(ID3D11Device*, ID3D11DeviceContext*, char*, WCHAR*);
-	bool Load(ID3D11Device*, ID3D11DeviceContext*, std::string*, WCHAR*);
+	bool Load(Microsoft::WRL::ComPtr<ID3D11Device>, Microsoft::WRL::ComPtr<ID3D11DeviceContext>, WCHAR*, WCHAR*);
+	bool Load(Microsoft::WRL::ComPtr<ID3D11Device>, Microsoft::WRL::ComPtr<ID3D11DeviceContext>, char*, WCHAR*);
+	bool Load(Microsoft::WRL::ComPtr<ID3D11Device>, Microsoft::WRL::ComPtr<ID3D11DeviceContext>, std::string*, WCHAR*);
 	// Methods for the diligent who properly initialized the object beforehand
 	bool Load(WCHAR*, WCHAR*);
 	bool Load(char*, WCHAR*);
@@ -80,9 +81,9 @@ public:
 
 	// Single-file load methods for model formats that contain references to their own textures
 	// Methods for the lazy who don't initialize the object beforehand
-	bool Load(ID3D11Device*, ID3D11DeviceContext*, WCHAR*);
-	bool Load(ID3D11Device*, ID3D11DeviceContext*, char*);
-	bool Load(ID3D11Device*, ID3D11DeviceContext*, std::string*);
+	bool Load(Microsoft::WRL::ComPtr<ID3D11Device>, Microsoft::WRL::ComPtr<ID3D11DeviceContext>, WCHAR*);
+	bool Load(Microsoft::WRL::ComPtr<ID3D11Device>, Microsoft::WRL::ComPtr<ID3D11DeviceContext>, char*);
+	bool Load(Microsoft::WRL::ComPtr<ID3D11Device>, Microsoft::WRL::ComPtr<ID3D11DeviceContext>, std::string*);
 	// Methods for the diligent who properly initialized the object beforehand
 	bool Load(WCHAR*);
 	bool Load(char*);
@@ -95,14 +96,8 @@ public:
 	bool LoadTexture(WCHAR*);
 
 	int GetVertexCount();
-	ID3D11Resource* GetTexture();
-	ID3D11ShaderResourceView* GetTextureView();
-
-	// Unload various bits of the model
-	void Unload();        // Unload entire model & texture
-	/* FUTURE: Make these functions private? */
-	void UnloadModel();   // Unload just the model
-	void UnloadTexture(); // Unload just the texture
+	Microsoft::WRL::ComPtr<ID3D11Resource> GetTexture();
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetTextureView();
 
 /* Private functions */
 private:
@@ -111,9 +106,8 @@ private:
 
 	// Initialize buffers
 	bool InitializeBuffers();
-	bool InitializeBuffers(ID3D11Device*);
-	void ReleaseBuffers();
-	void RenderBuffers(ID3D11DeviceContext*);
+	bool InitializeBuffers(Microsoft::WRL::ComPtr<ID3D11Device>);
+	void RenderBuffers(Microsoft::WRL::ComPtr<ID3D11DeviceContext>);
 
 	// Get the filetype from the file extension
 	int GetFileType(const std::string);
@@ -121,8 +115,4 @@ private:
 	// Loading methods for various file formats
 	bool LoadTextModel(const std::string);
 	bool LoadObjModel(const std::string);
-
-	// Release various aspects of the model
-	void ReleaseModel();
-	void ReleaseTexture();
 };

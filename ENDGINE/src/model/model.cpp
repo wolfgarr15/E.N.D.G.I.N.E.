@@ -7,13 +7,13 @@
 #include "model.hpp"
 
 /* Constructors */
-Model::Model() {
-	m_device = 0;
-	m_context = 0;
-	m_vertices = 0;
-	m_indices = 0;
-	m_texture = 0;
-	m_model = 0;
+Model::Model()
+	:	m_device(nullptr),
+		m_context(nullptr),
+		m_vertices(nullptr),
+		m_indices(nullptr),
+		m_model(nullptr)
+{
 	m_vertexCount = 0;
 }
 
@@ -22,22 +22,18 @@ Model::Model(const Model& other) {}
 Model::~Model() {}
 
 /* Public functions */
-inline bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* context) {
+inline bool Model::Initialize(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context) {
 	m_device = device;
 	m_context = context;
 
 	return true;
 }
 
-void Model::Release() {
-	Unload();
-}
-
 inline void Model::Render() {
 	Render(m_context);
 }
 
-void Model::Render(ID3D11DeviceContext* context) {
+void Model::Render(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context) {
 	if (m_vertexCount == 0) {
 		return;
 	}
@@ -47,15 +43,15 @@ void Model::Render(ID3D11DeviceContext* context) {
 	RenderBuffers(context);
 }
 
-bool Model::Load(ID3D11Device* device, ID3D11DeviceContext* context, WCHAR* modelFile, WCHAR* textureFile) {
+bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, WCHAR* modelFile, WCHAR* textureFile) {
 	return Initialize(device,context) && Load(WcharToString(modelFile), textureFile);
 }
 
-bool Model::Load(ID3D11Device* device, ID3D11DeviceContext* context, char* modelFile, WCHAR* textureFile) {
+bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, char* modelFile, WCHAR* textureFile) {
 	return Initialize(device,context) && Load((std::string*) modelFile, textureFile);
 }
 
-bool Model::Load(ID3D11Device* device, ID3D11DeviceContext* context, std::string* modelFile, WCHAR* textureFile) {
+bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::string* modelFile, WCHAR* textureFile) {
 	return Initialize(device,context) && Load(modelFile, textureFile);
 }
 
@@ -71,15 +67,15 @@ inline bool Model::Load(std::string* modelFile, WCHAR* textureFile) {
 	return LoadModel(modelFile) && LoadTexture(textureFile);
 }
 
-bool Model::Load(ID3D11Device* device, ID3D11DeviceContext* context, WCHAR* modelFile) {
+bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, WCHAR* modelFile) {
 	return Initialize(device,context) && Load(modelFile);
 }
 
-bool Model::Load(ID3D11Device* device, ID3D11DeviceContext* context, char* modelFile) {
+bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, char* modelFile) {
 	return Initialize(device,context) && Load(modelFile);
 }
 
-bool Model::Load(ID3D11Device* device, ID3D11DeviceContext* context, std::string* modelFile) {
+bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::string* modelFile) {
 	return Initialize(device,context) && Load(modelFile);
 }
 
@@ -156,26 +152,12 @@ int Model::GetVertexCount() {
 	return m_vertexCount;
 }
 
-ID3D11Resource* Model::GetTexture() {
+Microsoft::WRL::ComPtr<ID3D11Resource> Model::GetTexture() {
 	return m_texture->GetTexture();
 }
 
-ID3D11ShaderResourceView* Model::GetTextureView() {
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Model::GetTextureView() {
 	return m_texture->GetTextureView();
-}
-
-void Model::Unload() {
-	UnloadModel();
-	UnloadTexture();
-}
-
-inline void Model::UnloadModel() {
-	ReleaseBuffers();
-	ReleaseModel();
-}
-
-inline void Model::UnloadTexture() {
-	ReleaseTexture();
 }
 
 /* Private functions */
@@ -188,7 +170,7 @@ inline bool Model::InitializeBuffers() {
 	return InitializeBuffers(m_device);
 }
 
-inline bool Model::InitializeBuffers(ID3D11Device* device) {
+inline bool Model::InitializeBuffers(Microsoft::WRL::ComPtr<ID3D11Device> device) {
 	if (m_vertexCount == 0) {
 		throw ERR_NO_VERTICES;
 	}
@@ -201,7 +183,7 @@ inline bool Model::InitializeBuffers(ID3D11Device* device) {
 	}
 
 	for (int i = 0; i < m_vertexCount; i++) {
-		vertices[i] = m_model[i];
+		vertices[i] = m_model.Get()[i];
 
 		indices[i] = i;
 	}
@@ -253,24 +235,12 @@ inline bool Model::InitializeBuffers(ID3D11Device* device) {
 	return true;
 }
 
-void Model::RenderBuffers(ID3D11DeviceContext* context) {
+void Model::RenderBuffers(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context) {
 	unsigned int stride = sizeof(Vertex), offset = 0;
 
 	context->IASetVertexBuffers(0, 1, &m_vertices, &stride, &offset);
-	context->IASetIndexBuffer(m_indices, DXGI_FORMAT_R32_UINT, 0);
+	context->IASetIndexBuffer(m_indices.Get(), DXGI_FORMAT_R32_UINT, 0);
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-
-void Model::ReleaseBuffers() {
-	if (m_indices) {
-		m_indices->Release();
-		m_indices = 0;
-	}
-
-	if (m_vertices) {
-		m_vertices->Release();
-		m_vertices = 0;
-	}
 }
 
 int Model::GetFileType(const std::string filename) {
@@ -322,7 +292,7 @@ bool Model::LoadTextModel(const std::string contents) {
 		v.tex = DirectX::XMFLOAT2(x,y);
 		ss >> x >> y >> z;
 		v.normal = DirectX::XMFLOAT3(x,y,z);
-		m_model[i] = v;
+		m_model.Get()[i] = v;
 	}
 
 	// Clear the istringstream
@@ -442,7 +412,7 @@ bool Model::LoadObjModel(const std::string contents) {
 		v.position = positions[f.p - 1];
 		v.tex = texcoords[f.t - 1];
 		v.normal = normals[f.n - 1];
-		m_model[j++] = v;
+		m_model.Get()[j++] = v;
 	}
 
 	delete[] positions;
@@ -458,19 +428,4 @@ bool Model::LoadObjModel(const std::string contents) {
 	faces = 0;
 
 	return true;
-}
-
-void Model::ReleaseModel() {
-	if (m_model) {
-		delete[] m_model;
-		m_model = 0;
-	}
-}
-
-void Model::ReleaseTexture() {
-	if (m_texture) {
-		m_texture->Release();
-		delete m_texture;
-		m_texture = 0;
-	}
 }

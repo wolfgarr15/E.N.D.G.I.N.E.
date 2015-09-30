@@ -14,14 +14,15 @@
 #include <WICTextureLoader.h>
 #include <string>
 #include <boost/algorithm/string.hpp>
+#include <wrl.h>
 
 class Texture {
 /* Private member variables */
 private:
-	ID3D11Device* m_device;
-	ID3D11DeviceContext* m_context;
-	ID3D11Resource* m_texture;
-	ID3D11ShaderResourceView* m_textureView;
+	Microsoft::WRL::ComPtr<ID3D11Device> m_device;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_context;
+	Microsoft::WRL::ComPtr<ID3D11Resource> m_texture;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_textureView;
 
 /* Private enumerations */
 private:
@@ -48,22 +49,18 @@ public:
 	Texture(const Texture&);
 	~Texture();
 
-	bool Initialize(ID3D11Device*, ID3D11DeviceContext*);
-	void Release();
+	bool Initialize(Microsoft::WRL::ComPtr<ID3D11Device>, Microsoft::WRL::ComPtr<ID3D11DeviceContext>);
 
 	// Load methods for textures
 	// Methods for the lazy who don't initialize the object beforehand
-	bool Load(ID3D11Device*, ID3D11DeviceContext*, WCHAR*);
-	bool Load(ID3D11Device*, ID3D11DeviceContext*, std::wstring*);
+	bool Load(Microsoft::WRL::ComPtr<ID3D11Device>, Microsoft::WRL::ComPtr<ID3D11DeviceContext>, WCHAR*);
+	bool Load(Microsoft::WRL::ComPtr<ID3D11Device>, Microsoft::WRL::ComPtr<ID3D11DeviceContext>, std::wstring*);
 	// Methods for the diligent who properly initialized the object beforehand
 	bool Load(WCHAR*);
 	bool Load(std::wstring*);
 
-	// Unload the texture
-	void Unload();
-
-	ID3D11Resource* GetTexture();
-	ID3D11ShaderResourceView* GetTextureView();
+	Microsoft::WRL::ComPtr<ID3D11Resource> GetTexture();
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetTextureView();
 
 /* Private functions */
 private:
@@ -71,6 +68,4 @@ private:
 
 	bool LoadDDSTexture(WCHAR*);
 	bool LoadWICTexture(WCHAR*);
-
-	void ReleaseTexture();
 };
