@@ -10,10 +10,10 @@
 Model::Model()
 	:	m_device(nullptr),
 		m_context(nullptr),
-		m_vertices(nullptr),
-		m_indices(nullptr),
-		m_model(nullptr)
+		m_vertices(nullptr)
 {
+	m_model = 0;
+	m_texture = 0;
 	m_vertexCount = 0;
 }
 
@@ -141,7 +141,8 @@ bool Model::LoadModel(std::string* filename) {
 }
 
 bool Model::LoadTexture(WCHAR* filename) {
-	if (!(m_texture = new Texture)) {
+	m_texture = new Texture;
+	if (!m_texture) {
 		return false;
 	}
 
@@ -178,12 +179,14 @@ inline bool Model::InitializeBuffers(Microsoft::WRL::ComPtr<ID3D11Device> device
 	Vertex* vertices;
 	unsigned long* indices;
 
-	if (!(vertices = new Vertex[m_vertexCount]) || !(indices = new unsigned long[m_vertexCount])) {
+	vertices = new Vertex[m_vertexCount];
+	indices = new unsigned long[m_vertexCount];
+	if (!vertices || !indices) {
 		return false;
 	}
 
 	for (int i = 0; i < m_vertexCount; i++) {
-		vertices[i] = m_model.Get()[i];
+		vertices[i] = m_model[i];
 
 		indices[i] = i;
 	}
@@ -269,7 +272,8 @@ bool Model::LoadTextModel(const std::string contents) {
 
 	ss >> m_vertexCount;
 
-	if (!(m_model = new Vertex[m_vertexCount])) {
+	m_model = new Vertex[m_vertexCount];
+	if (!m_model) {
 		return false;
 	}
 
@@ -292,7 +296,7 @@ bool Model::LoadTextModel(const std::string contents) {
 		v.tex = DirectX::XMFLOAT2(x,y);
 		ss >> x >> y >> z;
 		v.normal = DirectX::XMFLOAT3(x,y,z);
-		m_model.Get()[i] = v;
+		m_model[i] = v;
 	}
 
 	// Clear the istringstream
@@ -345,7 +349,11 @@ bool Model::LoadObjModel(const std::string contents) {
 		int p, t, n;
 	} *faces;
 
-	if (!(positions = new DirectX::XMFLOAT3[pCount]) || !(texcoords = new DirectX::XMFLOAT2[tCount]) || !(normals = new DirectX::XMFLOAT3[tCount]) || !(faces = new Face[m_vertexCount])) {
+	positions = new DirectX::XMFLOAT3[pCount];
+	texcoords = new DirectX::XMFLOAT2[tCount];
+	normals = new DirectX::XMFLOAT3[tCount];
+	faces = new Face[m_vertexCount];
+	if (!positions || !texcoords || !normals || !faces) {
 		return false;
 	}
 
@@ -401,7 +409,8 @@ bool Model::LoadObjModel(const std::string contents) {
 	ss.str("");
 	ss.clear();
 
-	if (!(m_model = new Vertex[m_vertexCount])) {
+	m_model = new Vertex[m_vertexCount];
+	if (!m_model) {
 		return false;
 	}
 
@@ -412,7 +421,7 @@ bool Model::LoadObjModel(const std::string contents) {
 		v.position = positions[f.p - 1];
 		v.tex = texcoords[f.t - 1];
 		v.normal = normals[f.n - 1];
-		m_model.Get()[j++] = v;
+		m_model[j++] = v;
 	}
 
 	delete[] positions;
