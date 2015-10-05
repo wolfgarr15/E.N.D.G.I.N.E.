@@ -8,11 +8,20 @@
 
 /* Constructors */
 Model::Model()
+<<<<<<< HEAD
 	: m_device(nullptr),
 	m_context(nullptr),
 	m_vertices(nullptr),
 	m_indices(nullptr)
 {
+=======
+	:	m_device(nullptr),
+		m_context(nullptr),
+		m_vertices(nullptr)
+{
+	m_model = 0;
+	m_texture = 0;
+>>>>>>> ENDGINE/dev
 	m_vertexCount = 0;
 }
 
@@ -41,6 +50,7 @@ void Model::Render(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context) {
 }
 
 bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, WCHAR* modelFile, WCHAR* textureFile) {
+<<<<<<< HEAD
 	return Initialize(device, context) && Load(WcharToString(modelFile), textureFile);
 }
 
@@ -50,6 +60,17 @@ bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::Co
 
 bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::string* modelFile, WCHAR* textureFile) {
 	return Initialize(device, context) && Load(modelFile, textureFile);
+=======
+	return Initialize(device,context) && Load(WcharToString(modelFile), textureFile);
+}
+
+bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, char* modelFile, WCHAR* textureFile) {
+	return Initialize(device,context) && Load((std::string*) modelFile, textureFile);
+}
+
+bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::string* modelFile, WCHAR* textureFile) {
+	return Initialize(device,context) && Load(modelFile, textureFile);
+>>>>>>> ENDGINE/dev
 }
 
 inline bool Model::Load(WCHAR* modelFile, WCHAR* textureFile) {
@@ -65,6 +86,7 @@ inline bool Model::Load(std::string* modelFile, WCHAR* textureFile) {
 }
 
 bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, WCHAR* modelFile) {
+<<<<<<< HEAD
 	return Initialize(device, context) && Load(modelFile);
 }
 
@@ -74,6 +96,17 @@ bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::Co
 
 bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::string* modelFile) {
 	return Initialize(device, context) && Load(modelFile);
+=======
+	return Initialize(device,context) && Load(modelFile);
+}
+
+bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, char* modelFile) {
+	return Initialize(device,context) && Load(modelFile);
+}
+
+bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::string* modelFile) {
+	return Initialize(device,context) && Load(modelFile);
+>>>>>>> ENDGINE/dev
 }
 
 inline bool Model::Load(WCHAR* modelFile) {
@@ -138,7 +171,8 @@ bool Model::LoadModel(std::string* filename) {
 }
 
 bool Model::LoadTexture(WCHAR* filename) {
-	if (!(m_texture = new Texture)) {
+	m_texture = new Texture;
+	if (!m_texture) {
 		return false;
 	}
 
@@ -175,7 +209,9 @@ inline bool Model::InitializeBuffers(Microsoft::WRL::ComPtr<ID3D11Device> device
 	Vertex* vertices;
 	unsigned long* indices;
 
-	if (!(vertices = new Vertex[m_vertexCount]) || !(indices = new unsigned long[m_vertexCount])) {
+	vertices = new Vertex[m_vertexCount];
+	indices = new unsigned long[m_vertexCount];
+	if (!vertices || !indices) {
 		return false;
 	}
 
@@ -266,7 +302,8 @@ bool Model::LoadTextModel(const std::string contents) {
 
 	ss >> m_vertexCount;
 
-	if (!(m_model = new Vertex[m_vertexCount])) {
+	m_model = new Vertex[m_vertexCount];
+	if (!m_model) {
 		return false;
 	}
 
@@ -343,7 +380,11 @@ bool Model::LoadObjModel(const std::string contents) {
 		int p, t, n;
 	} *faces;
 
-	if (!(positions = new DirectX::XMFLOAT3[pCount]) || !(texcoords = new DirectX::XMFLOAT2[tCount]) || !(normals = new DirectX::XMFLOAT3[tCount]) || !(faces = new Face[m_vertexCount])) {
+	positions = new DirectX::XMFLOAT3[pCount];
+	texcoords = new DirectX::XMFLOAT2[tCount];
+	normals = new DirectX::XMFLOAT3[tCount];
+	faces = new Face[m_vertexCount];
+	if (!positions || !texcoords || !normals || !faces) {
 		return false;
 	}
 
@@ -402,7 +443,8 @@ bool Model::LoadObjModel(const std::string contents) {
 	ss.str("");
 	ss.clear();
 
-	if (!(m_model = new Vertex[m_vertexCount])) {
+	m_model = new Vertex[m_vertexCount];
+	if (!m_model) {
 		return false;
 	}
 

@@ -99,7 +99,11 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11Resource> GetTexture();
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetTextureView();
 
+<<<<<<< HEAD
 	/* Private functions */
+=======
+/* Private functions */
+>>>>>>> ENDGINE/dev
 private:
 	// Convert WCHAR* to std::string*
 	std::string* WcharToString(WCHAR*);
