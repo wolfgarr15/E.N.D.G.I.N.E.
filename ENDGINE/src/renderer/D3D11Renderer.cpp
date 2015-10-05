@@ -35,7 +35,7 @@ D3D11Renderer::~D3D11Renderer()
 		m_pSwapChain->SetFullscreenState(FALSE, NULL);
 }
 
-PVOID D3D11Renderer::operator new(UINT uMemorySize)
+PVOID D3D11Renderer::operator new(SIZE_T uMemorySize)
 {
 	// Set the alignment of the D3D11Renderer memory block to 16 bytes.
 	//

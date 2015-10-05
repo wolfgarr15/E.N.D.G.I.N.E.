@@ -1,44 +1,31 @@
 /******************************************************************************
- * File:    texture.cpp                                                       *
- * Author:  William Gehring                                                   *
- * Created: 2015-08-30                                                        *
- ******************************************************************************/
+* File:    texture.cpp                                                       *
+* Author:  William Gehring                                                   *
+* Created: 2015-08-30                                                        *
+******************************************************************************/
 
 #include "texture.hpp"
 
-Texture::Texture() {
-	m_device = 0;
-	m_context = 0;
-	m_texture = 0;
-	m_textureView = 0;
-}
+Texture::Texture()
+	: m_device(nullptr),
+	m_context(nullptr),
+	m_texture(nullptr),
+	m_textureView(nullptr) {}
 
 Texture::Texture(const Texture& other) {}
 
-Texture::~Texture() {}
-
-bool Texture::Initialize(ID3D11Device* device, ID3D11DeviceContext* context) {
+bool Texture::Initialize(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context) {
 	m_device = device;
 	m_context = context;
 
 	return true;
 }
 
-void Texture::Release() {
-	Unload();
-
-	delete m_device;
-	m_device = 0;
-
-	delete m_context;
-	m_context = 0;
-}
-
-bool Texture::Load(ID3D11Device* device, ID3D11DeviceContext* context, WCHAR* filename) {
+bool Texture::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, WCHAR* filename) {
 	return Initialize(device, context) && Load(filename);
 }
 
-bool Texture::Load(ID3D11Device* device, ID3D11DeviceContext* context, std::wstring* filename) {
+bool Texture::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::wstring* filename) {
 	return Initialize(device, context) && Load(filename);
 }
 
@@ -53,17 +40,17 @@ bool Texture::Load(WCHAR* filename) {
 
 	bool success = false;
 	switch (GetFileType(filename)) {
-		case FILETYPE_DDS:
-			success = LoadDDSTexture(filename);
-			break;
-		case FILETYPE_JPG:
-		case FILETYPE_PNG:
-		case FILETYPE_TGA:
-		case FILETYPE_BMP:
-			success = LoadWICTexture(filename);
-			break;
-		default:
-			throw ERR_UNKNOWN_FILETYPE;
+	case FILETYPE_DDS:
+		success = LoadDDSTexture(filename);
+		break;
+	case FILETYPE_JPG:
+	case FILETYPE_PNG:
+	case FILETYPE_TGA:
+	case FILETYPE_BMP:
+		success = LoadWICTexture(filename);
+		break;
+	default:
+		throw ERR_UNKNOWN_FILETYPE;
 	}
 
 	if (!success) {
@@ -74,18 +61,14 @@ bool Texture::Load(WCHAR* filename) {
 }
 
 inline bool Texture::Load(std::wstring* filename) {
-	return Load((WCHAR*) filename->c_str());
+	return Load((WCHAR*)filename->c_str());
 }
 
-inline void Texture::Unload() {
-	ReleaseTexture();
-}
-
-ID3D11Resource* Texture::GetTexture() {
+Microsoft::WRL::ComPtr<ID3D11Resource> Texture::GetTexture() {
 	return m_texture;
 }
 
-ID3D11ShaderResourceView* Texture::GetTextureView() {
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Texture::GetTextureView() {
 	return m_textureView;
 }
 
@@ -107,7 +90,7 @@ int Texture::GetFileType(const std::wstring filename) {
 }
 
 bool Texture::LoadDDSTexture(WCHAR* filename) {
-	if (FAILED(DirectX::CreateDDSTextureFromFile(m_device, m_context, filename, &m_texture, &m_textureView, 0))) {
+	if (FAILED(DirectX::CreateDDSTextureFromFile(m_device.Get(), m_context.Get(), filename, &m_texture, &m_textureView, 0))) {
 		return false;
 	}
 
@@ -115,23 +98,9 @@ bool Texture::LoadDDSTexture(WCHAR* filename) {
 }
 
 bool Texture::LoadWICTexture(WCHAR* filename) {
-	if (FAILED(DirectX::CreateWICTextureFromFile(m_device, m_context, filename, &m_texture, &m_textureView, 0))) {
+	if (FAILED(DirectX::CreateWICTextureFromFile(m_device.Get(), m_context.Get(), filename, &m_texture, &m_textureView, 0))) {
 		return false;
 	}
 
 	return true;
-}
-
-void Texture::ReleaseTexture() {
-	if (m_texture) {
-		m_texture->Release();
-		delete m_texture;
-		m_texture = 0;
-	}
-
-	if (m_textureView) {
-		m_textureView->Release();
-		delete m_textureView;
-		m_textureView = 0;
-	}
 }

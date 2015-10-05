@@ -66,7 +66,7 @@ public:
 	D3D11Renderer();
 	~D3D11Renderer();
 
-	PVOID operator new(UINT uMemorySize);
+	PVOID operator new(SIZE_T uMemorySize);
 	VOID operator delete(PVOID pMemoryBlock);
 
 	BOOL Initialize(HWND hWnd, CONST EngineConfig* pConfig);
@@ -86,8 +86,8 @@ public:
 	VOID GetVideoCardName(std::string& videoCardName) CONST;
 
 private:
-	D3D11Renderer(const D3D11Renderer& other) = delete;
-	D3D11Renderer& operator =(const D3D11Renderer& other) = delete;
+	D3D11Renderer(CONST D3D11Renderer& other) = delete;
+	D3D11Renderer& operator=(CONST D3D11Renderer& other) = delete;
 
 	VOID IntializeOrthoMatrix();
 	VOID InitializeWorldMatrix();

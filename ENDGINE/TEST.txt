@@ -1,2 +1,2 @@
-Video Card Name : NVIDIA Quadro K610M 
-Video Memory (MB) : 953
+Video Card Name : Intel(R) HD Graphics 4600
+Video Memory (MB) : 128
