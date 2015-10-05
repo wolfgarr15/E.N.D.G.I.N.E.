@@ -26,8 +26,8 @@ public:
 	TextureShader();
 	~TextureShader() = default;
 
-	bool Initialize(Microsoft::WRL::ComPtr<ID3D11Device>& device,
-		            Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext);
+	bool Initialize(CONST Microsoft::WRL::ComPtr<ID3D11Device>& device,
+		            CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext);
 
 	bool Render(int indexCount,
 				CONST DirectX::XMMATRIX& worldMatrix,

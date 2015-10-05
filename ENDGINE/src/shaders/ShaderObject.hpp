@@ -47,8 +47,8 @@ public:
 	ShaderObject();
 	virtual ~ShaderObject() = default;
 
-	virtual bool Initialize(Microsoft::WRL::ComPtr<ID3D11Device>& device,
-						    Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) = 0;
+	virtual bool Initialize(CONST Microsoft::WRL::ComPtr<ID3D11Device>& device,
+						    CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) = 0;
 
 	virtual bool Render(int indexCount,
 						CONST DirectX::XMMATRIX& worldMatrix,

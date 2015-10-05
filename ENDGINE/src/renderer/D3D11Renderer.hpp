@@ -66,7 +66,7 @@ public:
 	D3D11Renderer();
 	~D3D11Renderer();
 
-	PVOID operator new(SIZE_T uMemorySize);
+	PVOID operator new(size_t uMemorySize);
 	VOID operator delete(PVOID pMemoryBlock);
 
 	BOOL Initialize(HWND hWnd, CONST EngineConfig* pConfig);

@@ -19,12 +19,12 @@ TextureShader::TextureShader()
 	// DO NOTHING.
 }
 
-bool TextureShader::Initialize(Microsoft::WRL::ComPtr<ID3D11Device>& device,
-							   Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
+bool TextureShader::Initialize(CONST Microsoft::WRL::ComPtr<ID3D11Device>& device,
+							   CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
 	// Get pointers to the D3D interface.
-	m_device.As(&device);
-	m_deviceContext.As(&deviceContext);
+	m_device = device;
+	m_deviceContext = deviceContext;
 
 	// Use the default vertex input description.
 	std::vector<D3D11_INPUT_ELEMENT_DESC> inputDesc;
