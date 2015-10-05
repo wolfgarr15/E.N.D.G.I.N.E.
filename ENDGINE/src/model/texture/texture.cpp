@@ -1,13 +1,21 @@
 /******************************************************************************
- * File:    texture.cpp                                                       *
- * Author:  William Gehring                                                   *
- * Created: 2015-08-30                                                        *
- ******************************************************************************/
+* File:    texture.cpp                                                       *
+* Author:  William Gehring                                                   *
+* Created: 2015-08-30                                                        *
+******************************************************************************/
 
 #include "texture.hpp"
 
 Texture::Texture()
 	: m_device(nullptr),
+<<<<<<< HEAD
+	m_context(nullptr),
+	m_texture(nullptr),
+	m_textureView(nullptr) {}
+
+Texture::Texture(const Texture& other) {}
+
+=======
 		m_context(nullptr),
 		m_texture(nullptr),
 		m_textureView(nullptr) {}
@@ -16,6 +24,7 @@ Texture::Texture(const Texture& other) {}
 
 Texture::~Texture() {}
 
+>>>>>>> ENDGINE/dev
 bool Texture::Initialize(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context) {
 	m_device = device;
 	m_context = context;
@@ -42,17 +51,17 @@ bool Texture::Load(WCHAR* filename) {
 
 	bool success = false;
 	switch (GetFileType(filename)) {
-		case FILETYPE_DDS:
-			success = LoadDDSTexture(filename);
-			break;
-		case FILETYPE_JPG:
-		case FILETYPE_PNG:
-		case FILETYPE_TGA:
-		case FILETYPE_BMP:
-			success = LoadWICTexture(filename);
-			break;
-		default:
-			throw ERR_UNKNOWN_FILETYPE;
+	case FILETYPE_DDS:
+		success = LoadDDSTexture(filename);
+		break;
+	case FILETYPE_JPG:
+	case FILETYPE_PNG:
+	case FILETYPE_TGA:
+	case FILETYPE_BMP:
+		success = LoadWICTexture(filename);
+		break;
+	default:
+		throw ERR_UNKNOWN_FILETYPE;
 	}
 
 	if (!success) {
@@ -63,7 +72,7 @@ bool Texture::Load(WCHAR* filename) {
 }
 
 inline bool Texture::Load(std::wstring* filename) {
-	return Load((WCHAR*) filename->c_str());
+	return Load((WCHAR*)filename->c_str());
 }
 
 Microsoft::WRL::ComPtr<ID3D11Resource> Texture::GetTexture() {

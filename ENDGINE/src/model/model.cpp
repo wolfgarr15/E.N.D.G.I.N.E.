@@ -1,25 +1,31 @@
 /******************************************************************************
- * File:    model.cpp                                                         *
- * Author:  William Gehring                                                   *
- * Created: 2015-08-22                                                        *
- ******************************************************************************/
+* File:    model.cpp                                                         *
+* Author:  William Gehring                                                   *
+* Created: 2015-08-22                                                        *
+******************************************************************************/
 
 #include "model.hpp"
 
 /* Constructors */
 Model::Model()
+<<<<<<< HEAD
+	: m_device(nullptr),
+	m_context(nullptr),
+	m_vertices(nullptr),
+	m_indices(nullptr)
+{
+=======
 	:	m_device(nullptr),
 		m_context(nullptr),
 		m_vertices(nullptr)
 {
 	m_model = 0;
 	m_texture = 0;
+>>>>>>> ENDGINE/dev
 	m_vertexCount = 0;
 }
 
 Model::Model(const Model& other) {}
-
-Model::~Model() {}
 
 /* Public functions */
 inline bool Model::Initialize(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context) {
@@ -44,6 +50,17 @@ void Model::Render(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context) {
 }
 
 bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, WCHAR* modelFile, WCHAR* textureFile) {
+<<<<<<< HEAD
+	return Initialize(device, context) && Load(WcharToString(modelFile), textureFile);
+}
+
+bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, char* modelFile, WCHAR* textureFile) {
+	return Initialize(device, context) && Load((std::string*) modelFile, textureFile);
+}
+
+bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::string* modelFile, WCHAR* textureFile) {
+	return Initialize(device, context) && Load(modelFile, textureFile);
+=======
 	return Initialize(device,context) && Load(WcharToString(modelFile), textureFile);
 }
 
@@ -53,6 +70,7 @@ bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::Co
 
 bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::string* modelFile, WCHAR* textureFile) {
 	return Initialize(device,context) && Load(modelFile, textureFile);
+>>>>>>> ENDGINE/dev
 }
 
 inline bool Model::Load(WCHAR* modelFile, WCHAR* textureFile) {
@@ -68,6 +86,17 @@ inline bool Model::Load(std::string* modelFile, WCHAR* textureFile) {
 }
 
 bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, WCHAR* modelFile) {
+<<<<<<< HEAD
+	return Initialize(device, context) && Load(modelFile);
+}
+
+bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, char* modelFile) {
+	return Initialize(device, context) && Load(modelFile);
+}
+
+bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::string* modelFile) {
+	return Initialize(device, context) && Load(modelFile);
+=======
 	return Initialize(device,context) && Load(modelFile);
 }
 
@@ -77,6 +106,7 @@ bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::Co
 
 bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::string* modelFile) {
 	return Initialize(device,context) && Load(modelFile);
+>>>>>>> ENDGINE/dev
 }
 
 inline bool Model::Load(WCHAR* modelFile) {
@@ -115,15 +145,15 @@ bool Model::LoadModel(std::string* filename) {
 	in.close();
 
 	bool success = false;
-	switch(GetFileType(*filename)) {
-		case FILETYPE_TXT:
-			success = LoadTextModel(contents);
-			break;
-		case FILETYPE_OBJ:
-			success = LoadObjModel(contents);
-			break;
-		default:
-			throw ERR_UNKNOWN_FILETYPE;
+	switch (GetFileType(*filename)) {
+	case FILETYPE_TXT:
+		success = LoadTextModel(contents);
+		break;
+	case FILETYPE_OBJ:
+		success = LoadObjModel(contents);
+		break;
+	default:
+		throw ERR_UNKNOWN_FILETYPE;
 	}
 
 	// Clear the string buffer
@@ -164,7 +194,7 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Model::GetTextureView() {
 /* Private functions */
 inline std::string* Model::WcharToString(WCHAR* wchar) {
 	std::wstring ws(wchar);
-	return &std::string(ws.begin(),ws.end());
+	return &std::string(ws.begin(), ws.end());
 }
 
 inline bool Model::InitializeBuffers() {
@@ -186,7 +216,7 @@ inline bool Model::InitializeBuffers(Microsoft::WRL::ComPtr<ID3D11Device> device
 	}
 
 	for (int i = 0; i < m_vertexCount; i++) {
-		vertices[i] = m_model[i];
+		vertices[i] = m_model.Get()[i];
 
 		indices[i] = i;
 	}
@@ -291,12 +321,12 @@ bool Model::LoadTextModel(const std::string contents) {
 	float x, y, z;
 	for (int i = 0; i < m_vertexCount; i++) {
 		ss >> x >> y >> z;
-		v.position = DirectX::XMFLOAT3(x,y,z);
+		v.position = DirectX::XMFLOAT3(x, y, z);
 		ss >> x >> y;
-		v.tex = DirectX::XMFLOAT2(x,y);
+		v.tex = DirectX::XMFLOAT2(x, y);
 		ss >> x >> y >> z;
-		v.normal = DirectX::XMFLOAT3(x,y,z);
-		m_model[i] = v;
+		v.normal = DirectX::XMFLOAT3(x, y, z);
+		m_model.Get()[i] = v;
 	}
 
 	// Clear the istringstream
@@ -321,8 +351,9 @@ bool Model::LoadObjModel(const std::string contents) {
 			ss.get(input);
 			if (input == ' ') { pCount++; }
 			else if (input == 't') { tCount++; }
-			else if (input == 'n') { nCount++;}
-		} else if (input == 'f') {
+			else if (input == 'n') { nCount++; }
+		}
+		else if (input == 'f') {
 			ss.get(input);
 			if (input == ' ') { fCount++; }
 		}
@@ -377,16 +408,19 @@ bool Model::LoadObjModel(const std::string contents) {
 				ss >> p.x >> p.y >> p.z;
 				p.z = -p.z; // Invert z coordinate for left-hand coordinate conversion
 				positions[vInd++] = p;
-			} else if (input == 't') {
+			}
+			else if (input == 't') {
 				ss >> t.x >> t.y;
 				t.y = 1.0f - t.y; // Invert p texture coordinate for left-hand coordinate system
 				texcoords[tInd++] = t;
-			} else if (input == 'n') {
+			}
+			else if (input == 'n') {
 				ss >> p.x >> p.y >> p.z;
 				p.z = -p.z; // Invert z normal for left-hand coordinate system
 				normals[nInd++] = p;
 			}
-		} else if (input == 'f') {
+		}
+		else if (input == 'f') {
 			int t = fInd;
 			for (int i = t + 2; i >= t; i--) {
 				ss >> f.p >> input >> f.t >> input >> f.n;
@@ -421,7 +455,7 @@ bool Model::LoadObjModel(const std::string contents) {
 		v.position = positions[f.p - 1];
 		v.tex = texcoords[f.t - 1];
 		v.normal = normals[f.n - 1];
-		m_model[j++] = v;
+		m_model.Get()[j++] = v;
 	}
 
 	delete[] positions;

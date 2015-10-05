@@ -1,5 +1,7 @@
 ////////////////////////////////
 // Filename: RareInput.cpp
+//
+// Author: Wolfe S. Greene
 ////////////////////////////////
 
 ////////////////////////////////////////////////////////////////
@@ -13,7 +15,7 @@
 RareInput::RareInput()
 {
 	// Initialize keyboard and mouse button states.
-	for (SIZE_T i = 0; i < NUMKEYBOARDKEYS; i++)
+	for (UINT i = 0; i < NUMKEYBOARDKEYS; i++)
 	{
 		m_keys[i] = false;
 
@@ -216,6 +218,4 @@ VOID RareInput::ProcessRawInputMessages(LPARAM lParam)
 
 	if (inputDeviceType == RIM_TYPEMOUSE)
 		ProcessMouseInput(inputBuffer.get());
-
-	return;
 }

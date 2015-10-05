@@ -1,30 +1,29 @@
 /******************************************************************************
- * File:    texture.hpp                                                       *
- * Author:  William Gehring                                                   *
- * Created: 2015-08-30                                                        *
- *                                                                            *
- * A general-purpose texture class for a game engine, with the ability to     *
- * load DDS and WIC textures.                                                 *
- ******************************************************************************/
+* File:    texture.hpp                                                       *
+* Author:  William Gehring                                                   *
+* Created: 2015-08-30                                                        *
+*                                                                            *
+* A general-purpose texture class for a game engine, with the ability to     *
+* load DDS and WIC textures.                                                 *
+******************************************************************************/
 
 #pragma once
 
 #include <d3d11.h>
-#include <DDSTextureLoader.h>
-#include <WICTextureLoader.h>
+#include <DirectXTex.h>
 #include <string>
 #include <boost/algorithm/string.hpp>
 #include <wrl.h>
 
 class Texture {
-/* Private member variables */
+	/* Private member variables */
 private:
 	Microsoft::WRL::ComPtr<ID3D11Device> m_device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_context;
 	Microsoft::WRL::ComPtr<ID3D11Resource> m_texture;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_textureView;
 
-/* Private enumerations */
+	/* Private enumerations */
 private:
 	enum filetypes {
 		FILETYPE_DDS,
@@ -43,11 +42,11 @@ private:
 		ERR_UNKNOWN_FILETYPE
 	};
 
-/* Constructors and public functions */
+	/* Constructors and public functions */
 public:
 	Texture();
 	Texture(const Texture&);
-	~Texture();
+	~Texture() = default;
 
 	bool Initialize(Microsoft::WRL::ComPtr<ID3D11Device>, Microsoft::WRL::ComPtr<ID3D11DeviceContext>);
 
@@ -62,7 +61,11 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11Resource> GetTexture();
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetTextureView();
 
+<<<<<<< HEAD
+	/* Private functions */
+=======
 /* Private functions */
+>>>>>>> ENDGINE/dev
 private:
 	int GetFileType(const std::wstring);
 
