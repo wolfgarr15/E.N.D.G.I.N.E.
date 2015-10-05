@@ -11,8 +11,7 @@ Model::Model()
 	: m_device(nullptr),
 	m_context(nullptr),
 	m_vertices(nullptr),
-	m_indices(nullptr),
-	m_model(nullptr)
+	m_indices(nullptr)
 {
 	m_vertexCount = 0;
 }

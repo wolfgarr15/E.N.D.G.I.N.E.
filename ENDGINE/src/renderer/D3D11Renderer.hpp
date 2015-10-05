@@ -58,7 +58,7 @@ class D3D11Renderer
 	Microsoft::WRL::ComPtr<IDXGISwapChain> m_pSwapChain;
 
 	// Should the renderer own these matrices? Something to think about...
-	DirectX::XMMATRIX m_orthoMatrix;
+	DirectX::XMMATRIX m_viewMatrix;
 	DirectX::XMMATRIX m_projectionMatrix;
 	DirectX::XMMATRIX m_worldMatrix;
 
@@ -75,12 +75,12 @@ public:
 
 	VOID EndScene();
 
-	ID3D11Device* GetDevice() CONST;
-	ID3D11DeviceContext* GetDeviceContext() CONST;
+	CONST Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice() CONST;
+	CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetDeviceContext() CONST;
 
-	VOID GetOrthoMatrix(DirectX::XMMATRIX& orthoMatrix) CONST;
-	VOID GetProjectionMatrix(DirectX::XMMATRIX& projectionMatrix) CONST;
-	VOID GetWorldMatrix(DirectX::XMMATRIX& worldMatrix) CONST;
+	CONST DirectX::XMMATRIX& GetViewMatrix() CONST;
+	CONST DirectX::XMMATRIX& GetProjectionMatrix() CONST;
+	CONST DirectX::XMMATRIX& GetWorldMatrix() CONST;
 
 	SIZE_T GetVideoMemoryMB() CONST;
 	VOID GetVideoCardName(std::string& videoCardName) CONST;

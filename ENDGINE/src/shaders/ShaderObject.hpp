@@ -33,28 +33,38 @@ protected:
 		DirectX::XMMATRIX projection;
 	};
 
+	Microsoft::WRL::ComPtr<ID3D11Device> m_device;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_deviceContext;
+
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_matrixBuffer;
+
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> m_inputLayout;
+
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> m_pixelShader;
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> m_vertexShader;
 
 public:
 	ShaderObject();
-	virtual ~ShaderObject() = 0;
+	virtual ~ShaderObject() = default;
 
-	virtual bool Initialize(CONST Microsoft::WRL::ComPtr<ID3D11Device>& renderDevice) = 0;
+	virtual bool Initialize(Microsoft::WRL::ComPtr<ID3D11Device>& device,
+						    Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) = 0;
+
+	virtual bool Render(int indexCount,
+						CONST DirectX::XMMATRIX& worldMatrix,
+						CONST DirectX::XMMATRIX& viewMatrix,
+						CONST DirectX::XMMATRIX& projectionMatrix);
 
 protected:
-	virtual bool InitializeShaders(CONST Microsoft::WRL::ComPtr<ID3D11Device>& renderDevice,
-								   CONST std::wstring& vertexShaderFilename,
+	virtual bool InitializeShaders(CONST std::wstring& vertexShaderFilename,
 								   CONST std::string& vertexShaderName,
 								   CONST std::wstring& pixelShaderFilename,
 								   CONST std::string& pixelShaderName,
 								   CONST std::vector<D3D11_INPUT_ELEMENT_DESC>& inputDesc);
 
-	void AppendVertexInputDescElements(std::vector<D3D11_INPUT_ELEMENT_DESC>& inputDesc);
+	VOID AppendVertexInputDescElements(std::vector<D3D11_INPUT_ELEMENT_DESC>& inputDesc);
 
-	void AppendInputDescElement(std::vector<D3D11_INPUT_ELEMENT_DESC>& inputDesc, 
+	VOID AppendInputDescElement(std::vector<D3D11_INPUT_ELEMENT_DESC>& inputDesc, 
 							    CONST LPCSTR semanticName,
 							    UINT semanticIndex,
 							    DXGI_FORMAT format,
@@ -63,8 +73,7 @@ protected:
 							    D3D11_INPUT_CLASSIFICATION inputSlotClass,
 							    UINT instanceDataSetpRate);
 
-	bool CreateBuffer(CONST Microsoft::WRL::ComPtr<ID3D11Device>& renderDevice,
-					  Microsoft::WRL::ComPtr<ID3D11Buffer>& bufferComPtr,
+	bool CreateBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>& bufferComPtr,
 		              UINT byteWidth,
 					  D3D11_USAGE usage,
 					  UINT bindFlags,
@@ -73,8 +82,7 @@ protected:
 					  UINT structureByteStrid,
 					  CONST D3D11_SUBRESOURCE_DATA* pInitialData = NULL);
 
-	bool CreateSamplerState(CONST Microsoft::WRL::ComPtr<ID3D11Device>& renderDevice,
-							Microsoft::WRL::ComPtr<ID3D11SamplerState>& samplerComPtr,
+	bool CreateSamplerState(Microsoft::WRL::ComPtr<ID3D11SamplerState>& samplerComPtr,
 							D3D11_FILTER filter,
 							D3D11_TEXTURE_ADDRESS_MODE addressU,
 							D3D11_TEXTURE_ADDRESS_MODE addressV,
@@ -91,27 +99,26 @@ protected:
 							   CONST std::string& shaderVersion,
 							   Microsoft::WRL::ComPtr<ID3D10Blob>& shaderBuffer);
 
-	bool MapMatrixBuffer(CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext,
-					     UINT bufferNumber,
-		                 UINT bufferCount,
-		                 DirectX::XMMATRIX worldMatrix,
-		                 DirectX::XMMATRIX viewMatrix,
-		                 DirectX::XMMATRIX projectionMatrix);
-
-	virtual void SetShaders(CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext);
-
-	virtual void Draw(CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext, int indexCount);
-
-	virtual void RenderShader(CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext, int indexCount) = 0;
+	virtual bool SetShaders(CONST DirectX::XMMATRIX& worldMatrix,
+							CONST DirectX::XMMATRIX& viewMatrix,
+							CONST DirectX::XMMATRIX& projectionMatrix);
 
 private:
 	ShaderObject(CONST ShaderObject& other) = delete;
 	ShaderObject& operator=(CONST ShaderObject& other) = delete;
 
-	bool CreateMatrixBuffer(CONST Microsoft::WRL::ComPtr<ID3D11Device>& renderDevice);
+	bool CreateMatrixBuffer();
+
+	// NOTE: The matrix buffer will always be mapped to the first (BufferNumber = 0)
+	//       buffer slot. Therefore, all subclass constant buffers
+	//       must be assigned to buffer slots with BufferNumber > 0.
+	//
+	bool MapMatrixBuffer(DirectX::XMMATRIX worldMatrix,
+						 DirectX::XMMATRIX viewMatrix,
+						 DirectX::XMMATRIX projectionMatrix);
 	
 	// Temporary error handler until we decide how we'll handle engine-wide errors.
-	void OutputShaderErrors(CONST Microsoft::WRL::ComPtr<ID3D10Blob>& errorBlob,
+	VOID OutputShaderErrors(CONST Microsoft::WRL::ComPtr<ID3D10Blob>& errorBlob,
 							CONST std::wstring& shaderFilename,
 							CONST std::string& outputFilename);
 };

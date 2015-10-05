@@ -36,8 +36,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_vertices;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_indices;
 	int m_vertexCount;
-	Microsoft::WRL::ComPtr<Texture> m_texture;
-	Microsoft::WRL::ComPtr<Vertex> m_model;
+	Texture m_texture;
+	Vertex m_model;
 
 	/* Private enumerations */
 private:

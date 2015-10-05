@@ -19,23 +19,26 @@ TextureShader::TextureShader()
 	// DO NOTHING.
 }
 
-bool TextureShader::Initialize(CONST Microsoft::WRL::ComPtr<ID3D11Device>& renderDevice)
+bool TextureShader::Initialize(Microsoft::WRL::ComPtr<ID3D11Device>& device,
+							   Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
+	// Get pointers to the D3D interface.
+	m_device.As(&device);
+	m_deviceContext.As(&deviceContext);
+
 	// Use the default vertex input description.
 	std::vector<D3D11_INPUT_ELEMENT_DESC> inputDesc;
 	AppendVertexInputDescElements(inputDesc);
 
 	// Initialize the shaders.
-	RETURN_IF_FALSE(InitializeShaders(renderDevice, 
-									  L"vsTexture.hlsl", 
+	RETURN_IF_FALSE(InitializeShaders(L"vsTexture.hlsli", 
 									  "TextureVertexShader",
-									  L"psTexture.hlsl",
+									  L"psTexture.hlsli",
 									  "TexturePixelShader",
 									  inputDesc));
 
 	// Create the texture sampler state.
-	RETURN_IF_FALSE(CreateSamplerState(renderDevice,
-									   m_textureSampler,
+	RETURN_IF_FALSE(CreateSamplerState(m_textureSampler,
 									   D3D11_FILTER_MIN_MAG_MIP_LINEAR,
 									   D3D11_TEXTURE_ADDRESS_WRAP,
 									   D3D11_TEXTURE_ADDRESS_WRAP,
@@ -50,38 +53,20 @@ bool TextureShader::Initialize(CONST Microsoft::WRL::ComPtr<ID3D11Device>& rende
 	return true;
 }
 
-bool TextureShader::Render(CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext,
-						   int indexCount,
+bool TextureShader::Render(int indexCount,
 						   CONST DirectX::XMMATRIX& worldMatrix,
 						   CONST DirectX::XMMATRIX& viewMatrix,
 						   CONST DirectX::XMMATRIX& projectionMatrix,
 						   CONST Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& texture)
 {
-	RETURN_IF_FALSE(SetShaderResources(deviceContext,
-									   worldMatrix,
-									   viewMatrix,
-									   projectionMatrix,
-									   texture));
+	// Set the texture resource in the pixel shader.
+	m_deviceContext->PSSetShaderResources(0, 1, texture.GetAddressOf());
+	
+	// Set the sampler state.
+	m_deviceContext->PSSetSamplers(0, 1, m_textureSampler.GetAddressOf());
 
-	RenderShader(deviceContext, indexCount);
-
-	return true;
-}
-
-void TextureShader::RenderShader(CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext, int indexCount)
-{
-	SetShaders(deviceContext);
-	deviceContext->PSSetSamplers(0, 1, m_textureSampler.GetAddressOf());
-	Draw(deviceContext, indexCount);
-}
-
-bool TextureShader::SetShaderResources(CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext,
-									   CONST DirectX::XMMATRIX& worldMatrix,
-									   CONST DirectX::XMMATRIX& viewMatrix,
-									   CONST DirectX::XMMATRIX& projectionMatrix,
-									   CONST Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& texture)
-{
-	RETURN_IF_FALSE(MapMatrixBuffer(deviceContext, 0, 1, worldMatrix, viewMatrix, projectionMatrix));
-	deviceContext->PSSetShaderResources(0, 1, texture.GetAddressOf());
-	return true;
+	return ShaderObject::Render(indexCount,
+								worldMatrix,
+								viewMatrix,
+								projectionMatrix);
 }

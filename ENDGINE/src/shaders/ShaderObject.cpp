@@ -13,7 +13,9 @@
 // Class Definition
 //-----------------------------------------------------------------
 ShaderObject::ShaderObject()
-	: m_matrixBuffer(nullptr),
+	: m_device(nullptr),
+	  m_deviceContext(nullptr),
+	  m_matrixBuffer(nullptr),
 	  m_inputLayout(nullptr),
 	  m_pixelShader(nullptr),
 	  m_vertexShader(nullptr)
@@ -21,12 +23,11 @@ ShaderObject::ShaderObject()
 	// DO NOTHING.
 }
 
-bool ShaderObject::InitializeShaders(CONST Microsoft::WRL::ComPtr<ID3D11Device>& renderDevice,
-									   CONST std::wstring& vertexShaderFilename,
-									   CONST std::string& vertexShaderName,
-									   CONST std::wstring& pixelShaderFilename,
-									   CONST std::string& pixelShaderName,
-									   CONST std::vector<D3D11_INPUT_ELEMENT_DESC>& inputDesc)
+bool ShaderObject::InitializeShaders(CONST std::wstring& vertexShaderFilename,
+									 CONST std::string& vertexShaderName,
+									 CONST std::wstring& pixelShaderFilename,
+									 CONST std::string& pixelShaderName,
+									 CONST std::vector<D3D11_INPUT_ELEMENT_DESC>& inputDesc)
 {
 	Microsoft::WRL::ComPtr<ID3D10Blob> vertexShaderBuffer;
 	Microsoft::WRL::ComPtr<ID3D10Blob> pixelShaderBuffer;
@@ -44,31 +45,40 @@ bool ShaderObject::InitializeShaders(CONST Microsoft::WRL::ComPtr<ID3D11Device>&
 										  pixelShaderBuffer));
 
 	// Create the vertex shader from the buffer.
-	RETURN_IF_FAILS(renderDevice->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(),
-													 vertexShaderBuffer->GetBufferSize(),
-													 NULL,
-													 m_vertexShader.GetAddressOf()));
+	RETURN_IF_FAILS(m_device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(),
+											     vertexShaderBuffer->GetBufferSize(),
+											     NULL,
+											     m_vertexShader.GetAddressOf()));
 
 	// Create the pixel shader from the buffer.
-	RETURN_IF_FAILS(renderDevice->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(),
-													pixelShaderBuffer->GetBufferSize(),
-													NULL,
-													m_pixelShader.GetAddressOf()));
+	RETURN_IF_FAILS(m_device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(),
+												pixelShaderBuffer->GetBufferSize(),
+												NULL,
+												m_pixelShader.GetAddressOf()));
 
 	// Create the vertex input layout.
-	RETURN_IF_FAILS(renderDevice->CreateInputLayout(inputDesc.data(), 
-										            inputDesc.size(),
-													vertexShaderBuffer->GetBufferPointer(),
-													vertexShaderBuffer->GetBufferSize(),
-													m_inputLayout.GetAddressOf()));
+	RETURN_IF_FAILS(m_device->CreateInputLayout(inputDesc.data(), 
+										        inputDesc.size(),
+												vertexShaderBuffer->GetBufferPointer(),
+												vertexShaderBuffer->GetBufferSize(),
+												m_inputLayout.GetAddressOf()));
 
 	// Create the matrix constant buffer.
-	RETURN_IF_FALSE(CreateMatrixBuffer(renderDevice));
+	RETURN_IF_FALSE(CreateMatrixBuffer());
 
 	return true;
 }
 
-void ShaderObject::AppendVertexInputDescElements(std::vector<D3D11_INPUT_ELEMENT_DESC>& inputDesc)
+bool ShaderObject::Render(int indexCount,
+						  CONST DirectX::XMMATRIX& worldMatrix,
+						  CONST DirectX::XMMATRIX& viewMatrix,
+						  CONST DirectX::XMMATRIX& projectionMatrix)
+{
+	RETURN_IF_FALSE(SetShaders(worldMatrix, viewMatrix, projectionMatrix));
+	m_deviceContext->DrawIndexed(indexCount, 0, 0);
+}
+
+VOID ShaderObject::AppendVertexInputDescElements(std::vector<D3D11_INPUT_ELEMENT_DESC>& inputDesc)
 {
 	// The position coordinate element.
 	AppendInputDescElement(inputDesc,
@@ -101,7 +111,7 @@ void ShaderObject::AppendVertexInputDescElements(std::vector<D3D11_INPUT_ELEMENT
 		               0);
 }
 
-void ShaderObject::AppendInputDescElement(std::vector<D3D11_INPUT_ELEMENT_DESC>& inputDesc,
+VOID ShaderObject::AppendInputDescElement(std::vector<D3D11_INPUT_ELEMENT_DESC>& inputDesc,
 						                  CONST LPCSTR semanticName,
 						                  UINT semanticIndex,
 						                  DXGI_FORMAT format,
@@ -124,9 +134,7 @@ void ShaderObject::AppendInputDescElement(std::vector<D3D11_INPUT_ELEMENT_DESC>&
 	inputDesc.push_back(inputElement);
 }
 
-bool ShaderObject::CreateBuffer(CONST Microsoft::WRL::ComPtr<ID3D11Device>& renderDevice,
-								Microsoft::WRL::ComPtr<ID3D11Buffer>& bufferComPtr,
-								// D3D11_SUBRESOURCE_DATA = NULL <- NOTE: May need to add tbhis in future!
+bool ShaderObject::CreateBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>& bufferComPtr,
 								UINT byteWidth,
 								D3D11_USAGE usage,
 								UINT bindFlags,
@@ -145,14 +153,13 @@ bool ShaderObject::CreateBuffer(CONST Microsoft::WRL::ComPtr<ID3D11Device>& rend
 		structureByteStride
 	};
 
-	RETURN_IF_FAILS(renderDevice->CreateBuffer(&bufferDesc, 
+	RETURN_IF_FAILS(m_device->CreateBuffer(&bufferDesc, 
 					pInitialData, 
 					bufferComPtr.GetAddressOf()));
 	return true;
 }
 
-bool ShaderObject::CreateSamplerState(CONST Microsoft::WRL::ComPtr<ID3D11Device>& renderDevice,
-									  Microsoft::WRL::ComPtr<ID3D11SamplerState>& samplerComPtr,
+bool ShaderObject::CreateSamplerState(Microsoft::WRL::ComPtr<ID3D11SamplerState>& samplerComPtr,
 									  D3D11_FILTER filter,
 									  D3D11_TEXTURE_ADDRESS_MODE addressU,
 									  D3D11_TEXTURE_ADDRESS_MODE addressV,
@@ -179,8 +186,8 @@ bool ShaderObject::CreateSamplerState(CONST Microsoft::WRL::ComPtr<ID3D11Device>
 	samplerDesc.MinLOD = minLod;
 	samplerDesc.MaxLOD = maxLod;
 
-	RETURN_IF_FAILS(renderDevice->CreateSamplerState(&samplerDesc, 
-													 samplerComPtr.GetAddressOf()));
+	RETURN_IF_FAILS(m_device->CreateSamplerState(&samplerDesc, 
+												 samplerComPtr.GetAddressOf()));
 	return true;
 }
 
@@ -209,10 +216,21 @@ bool ShaderObject::CompileShaderFromFile(CONST std::wstring& shaderFileName,
 	return true;
 }
 
-bool ShaderObject::MapMatrixBuffer(CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext,
-								   UINT bufferNumber,
-								   UINT bufferCount,
-								   DirectX::XMMATRIX worldMatrix,
+bool ShaderObject::SetShaders(CONST DirectX::XMMATRIX& worldMatrix,
+							  CONST DirectX::XMMATRIX& viewMatrix,
+						      CONST DirectX::XMMATRIX& projectionMatrix)
+{
+	// Set the vertex shader input layout.
+	m_deviceContext->IAGetInputLayout(m_inputLayout.GetAddressOf());
+
+	// Set the vertex and pixel shaders for rendering.
+	m_deviceContext->VSSetShader(m_vertexShader.Get(), NULL, 0);
+	m_deviceContext->PSSetShader(m_pixelShader.Get(), NULL, 0);
+
+	return MapMatrixBuffer(worldMatrix, viewMatrix, projectionMatrix);
+}
+
+bool ShaderObject::MapMatrixBuffer(DirectX::XMMATRIX worldMatrix,
 								   DirectX::XMMATRIX viewMatrix,
 								   DirectX::XMMATRIX projectionMatrix)
 {
@@ -224,11 +242,11 @@ bool ShaderObject::MapMatrixBuffer(CONST Microsoft::WRL::ComPtr<ID3D11DeviceCont
 	projectionMatrix = DirectX::XMMatrixTranspose(projectionMatrix);
 
 	// Lock the constant buffer, do it can be written to.
-	RETURN_IF_FAILS(deviceContext->Map(m_matrixBuffer.Get(),
-									   NULL,
-									   D3D11_MAP_WRITE_DISCARD,
-									   NULL,
-									   &mappedResource));
+	RETURN_IF_FAILS(m_deviceContext->Map(m_matrixBuffer.Get(),
+									     NULL,
+									     D3D11_MAP_WRITE_DISCARD,
+									     NULL,
+									     &mappedResource));
 
 	// Get a pointer to the mapped resource.
 	MatrixBufferType* dataPtr = (MatrixBufferType*)mappedResource.pData;
@@ -239,46 +257,28 @@ bool ShaderObject::MapMatrixBuffer(CONST Microsoft::WRL::ComPtr<ID3D11DeviceCont
 	dataPtr->projection = projectionMatrix;
 
 	// Unlock the constant buffer.
-	deviceContext->Unmap(m_matrixBuffer.Get(), NULL);
+	m_deviceContext->Unmap(m_matrixBuffer.Get(), NULL);
 
 	// Map the constant buffer to the vertex shader.
-	deviceContext->VSSetConstantBuffers(bufferNumber, 
-										bufferCount, 
-										m_matrixBuffer.GetAddressOf());
+	m_deviceContext->VSSetConstantBuffers(0, 1, m_matrixBuffer.GetAddressOf());
 
 	return true;
 }
 
-void ShaderObject::SetShaders(CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
+bool ShaderObject::CreateMatrixBuffer()
 {
-	// Set the vertex shader input layout.
-	deviceContext->IAGetInputLayout(m_inputLayout.GetAddressOf);
-
-	// Set the vertex and pixel shaders for rendering.
-	deviceContext->VSSetShader(m_vertexShader.Get(), NULL, 0);
-	deviceContext->PSSetShader(m_pixelShader.Get(), NULL, 0);
+	return CreateBuffer(m_matrixBuffer,
+					    sizeof(MatrixBufferType),
+						D3D11_USAGE_DYNAMIC,
+						D3D11_BIND_CONSTANT_BUFFER,
+						D3D11_CPU_ACCESS_WRITE,
+						NULL,
+						NULL);
 }
 
-void ShaderObject::Draw(CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext, int indexCount)
-{
-	deviceContext->DrawIndexed(indexCount, 0, 0);
-}
-
-bool ShaderObject::CreateMatrixBuffer(CONST Microsoft::WRL::ComPtr<ID3D11Device>& renderDevice)
-{
-	return CreateBuffer(renderDevice,
-		m_matrixBuffer,
-		sizeof(MatrixBufferType),
-		D3D11_USAGE_DYNAMIC,
-		D3D11_BIND_CONSTANT_BUFFER,
-		D3D11_CPU_ACCESS_WRITE,
-		NULL,
-		NULL);
-}
-
-void ShaderObject::OutputShaderErrors(CONST Microsoft::WRL::ComPtr<ID3D10Blob>& errorBlob,
-	CONST std::wstring& shaderFilename,
-	CONST std::string& outputFilename)
+VOID ShaderObject::OutputShaderErrors(CONST Microsoft::WRL::ComPtr<ID3D10Blob>& errorBlob,
+									  CONST std::wstring& shaderFilename,
+									  CONST std::string& outputFilename)
 {
 	std::ofstream fout(outputFilename.c_str());
 

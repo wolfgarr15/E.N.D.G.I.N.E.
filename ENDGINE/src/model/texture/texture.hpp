@@ -10,8 +10,7 @@
 #pragma once
 
 #include <d3d11.h>
-#include <DDSTextureLoader.h>
-#include <WICTextureLoader.h>
+#include <DirectXTex.h>
 #include <string>
 #include <boost/algorithm/string.hpp>
 #include <wrl.h>

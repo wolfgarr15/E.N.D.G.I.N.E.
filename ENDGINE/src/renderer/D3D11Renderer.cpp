@@ -22,7 +22,7 @@ D3D11Renderer::D3D11Renderer()
 	  m_pRenderTargetView(nullptr),
 	  m_pSwapChain(nullptr)
 {
-	SecureZeroMemory(&m_orthoMatrix, sizeof(DirectX::XMMATRIX));
+	SecureZeroMemory(&m_viewMatrix, sizeof(DirectX::XMMATRIX));
 	SecureZeroMemory(&m_worldMatrix, sizeof(DirectX::XMMATRIX));
 	SecureZeroMemory(&m_projectionMatrix, sizeof(DirectX::XMMATRIX));
 }
@@ -125,29 +125,29 @@ VOID D3D11Renderer::EndScene()
 	}
 }
 
-ID3D11Device* D3D11Renderer::GetDevice() CONST
+CONST Microsoft::WRL::ComPtr<ID3D11Device>& D3D11Renderer::GetDevice() CONST
 {
-	return m_pDevice.Get();
+	return m_pDevice;
 }
 
-ID3D11DeviceContext* D3D11Renderer::GetDeviceContext() CONST
+CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& D3D11Renderer::GetDeviceContext() CONST
 {
-	return m_pDeviceContext.Get();
+	return m_pDeviceContext;
 }
 
-VOID D3D11Renderer::GetOrthoMatrix(DirectX::XMMATRIX& orthoMatrix) CONST
+CONST DirectX::XMMATRIX& D3D11Renderer::GetViewMatrix() CONST
 {
-	orthoMatrix = m_orthoMatrix;
+	return m_viewMatrix;
 }
 
-VOID D3D11Renderer::GetProjectionMatrix(DirectX::XMMATRIX& projectionMatrix) CONST
+CONST DirectX::XMMATRIX& D3D11Renderer::GetProjectionMatrix() CONST
 {
-	projectionMatrix = m_projectionMatrix;
+	return m_projectionMatrix;
 }
 
-VOID D3D11Renderer::GetWorldMatrix(DirectX::XMMATRIX& worldMatrix) CONST
+CONST DirectX::XMMATRIX& D3D11Renderer::GetWorldMatrix() CONST
 {
-	worldMatrix = m_worldMatrix;
+	return m_worldMatrix;
 }
 
 SIZE_T D3D11Renderer::GetVideoMemoryMB() CONST
@@ -162,7 +162,7 @@ VOID D3D11Renderer::GetVideoCardName(std::string& videoCardName) CONST
 
 VOID D3D11Renderer::IntializeOrthoMatrix()
 {
-	m_orthoMatrix = DirectX::XMMatrixOrthographicLH((FLOAT)m_iDisplayWidth, 
+	m_viewMatrix = DirectX::XMMatrixOrthographicLH((FLOAT)m_iDisplayWidth, 
 													(FLOAT)m_iDisplayHeight, 
 						                            m_fScreenNear, 
 													m_fScreenFar);
