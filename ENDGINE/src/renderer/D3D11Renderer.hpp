@@ -1,7 +1,5 @@
 ///////////////////////////////////
 // Filename: D3D11Renderer.hpp
-//
-// Author: Wolfe S. Greene
 ///////////////////////////////////
 
 ////////////////////////////////
@@ -58,7 +56,7 @@ class D3D11Renderer
 	Microsoft::WRL::ComPtr<IDXGISwapChain> m_pSwapChain;
 
 	// Should the renderer own these matrices? Something to think about...
-	DirectX::XMMATRIX m_viewMatrix;
+	DirectX::XMMATRIX m_orthoMatrix;
 	DirectX::XMMATRIX m_projectionMatrix;
 	DirectX::XMMATRIX m_worldMatrix;
 
@@ -66,7 +64,7 @@ public:
 	D3D11Renderer();
 	~D3D11Renderer();
 
-	PVOID operator new(size_t uMemorySize);
+	PVOID operator new(UINT uMemorySize);
 	VOID operator delete(PVOID pMemoryBlock);
 
 	BOOL Initialize(HWND hWnd, CONST EngineConfig* pConfig);
@@ -75,19 +73,19 @@ public:
 
 	VOID EndScene();
 
-	CONST Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice() CONST;
-	CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetDeviceContext() CONST;
+	ID3D11Device* GetDevice() CONST;
+	ID3D11DeviceContext* GetDeviceContext() CONST;
 
-	CONST DirectX::XMMATRIX& GetViewMatrix() CONST;
-	CONST DirectX::XMMATRIX& GetProjectionMatrix() CONST;
-	CONST DirectX::XMMATRIX& GetWorldMatrix() CONST;
+	VOID GetOrthoMatrix(DirectX::XMMATRIX& orthoMatrix) CONST;
+	VOID GetProjectionMatrix(DirectX::XMMATRIX& projectionMatrix) CONST;
+	VOID GetWorldMatrix(DirectX::XMMATRIX& worldMatrix) CONST;
 
 	SIZE_T GetVideoMemoryMB() CONST;
 	VOID GetVideoCardName(std::string& videoCardName) CONST;
 
 private:
-	D3D11Renderer(CONST D3D11Renderer& other) = delete;
-	D3D11Renderer& operator=(CONST D3D11Renderer& other) = delete;
+	D3D11Renderer(const D3D11Renderer& other) = delete;
+	D3D11Renderer& operator =(const D3D11Renderer& other) = delete;
 
 	VOID IntializeOrthoMatrix();
 	VOID InitializeWorldMatrix();
@@ -99,7 +97,7 @@ private:
 	BOOL InitializeDepthStencilBuffer();
 	BOOL InitializeSwapChain();
 
-	VOID SetDisplayDimensions(CONST EngineConfig* pConfig);
+	VOID SetDisplayDimensions(CONST EngineConfig* pCongig);
 
 	BOOL SetRefreshParams(IDXGIOutput* pAdapterOuput);
 
