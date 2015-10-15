@@ -1,11 +1,11 @@
 /******************************************************************************
-* File:    model.hpp                                                         *
-* Author:  William Gehring                                                   *
-* Created: 2015-08-22                                                        *
-*                                                                            *
-* A general-purpose model class for a game engine, with the ability to read  *
-* multiple file formats.                                                     *
-******************************************************************************/
+ * File:    model.hpp                                                         *
+ * Author:  William Gehring                                                   *
+ * Created: 2015-08-22                                                        *
+ *                                                                            *
+ * A general-purpose model class for a game engine, with the ability to read  *
+ * multiple file formats.                                                     *
+ ******************************************************************************/
 
 #pragma once
 
@@ -21,7 +21,7 @@
 #include "./texture/texture.hpp"
 
 class Model {
-	/* Private data types */
+/* Private data types */
 private:
 	struct Vertex {
 		DirectX::XMFLOAT3 position;
@@ -29,17 +29,17 @@ private:
 		DirectX::XMFLOAT3 normal;
 	};
 
-	/* Private member variables */
+/* Private member variables */
 private:
 	Microsoft::WRL::ComPtr<ID3D11Device> m_device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_context;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_vertices;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_indices;
 	int m_vertexCount;
-	Texture m_texture;
-	Vertex m_model;
+	Texture* m_texture;
+	Vertex* m_model;
 
-	/* Private enumerations */
+/* Private enumerations */
 private:
 	enum filetypes {
 		FILETYPE_OBJ,
@@ -59,11 +59,11 @@ private:
 		ERR_UNKNOWN_FILETYPE
 	};
 
-	/* Constructors and public functions */
+/* Constructors and public functions */
 public:
 	Model();
 	Model(const Model&);
-	~Model() = default;
+	~Model();
 
 	bool Initialize(Microsoft::WRL::ComPtr<ID3D11Device>, Microsoft::WRL::ComPtr<ID3D11DeviceContext>);
 	void Render();
@@ -99,11 +99,7 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11Resource> GetTexture();
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetTextureView();
 
-<<<<<<< HEAD
-	/* Private functions */
-=======
 /* Private functions */
->>>>>>> ENDGINE/dev
 private:
 	// Convert WCHAR* to std::string*
 	std::string* WcharToString(WCHAR*);

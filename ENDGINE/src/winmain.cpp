@@ -16,9 +16,6 @@
 #include "window\MainWindow.hpp"
 #include "rareInput\RareInput.hpp"
 #include "renderer\D3D11Renderer.hpp"
-#include "shaders\TextureShader.hpp"
-#include "camera\Camera.hpp"
-#include "model\model.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Main Application Entry (NOTE: This is a test program!)
@@ -42,23 +39,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 
 	// Create and initialize the DX11 renderer.
 	D3D11Renderer DX11;
-	if (!DX11.Initialize(window.GetHandle(), &config))
-		return 1;
-
-	// Create and initialize the TextureShader.
-	TextureShader textureShader;
-	if(!textureShader.Initialize(DX11.GetDevice(), DX11.GetDeviceContext))
-		return 2;
-
-	// Create and initialize the camera.
-	Camera camera(DirectX::XMFLOAT3(0.0f, 0.0f, -10.0f));
-
-	// Create and initialize the model.
-	Model model;
-	if (!model.Initialize(DX11.GetDevice(), DX11.GetDeviceContext()))
-		return 3;
-	if(!model.Load("data/meshes/cube.obj", L"data/textures/stone01.tga"))
-		return 4;
+	DX11.Initialize(window.GetHandle(), &config);
 
 	// Eveything else below is rando test code.
 	//---------------------------------------------------------
@@ -71,24 +52,13 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 
 	while (!done)
 	{
-		DirectX::XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
-
-		DX11.BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
-		camera.RenderView();
-		model.Render();
-		if (!textureShader.Render(model.GetVertexCount(),
-								  DX11.GetWorldMatrix(),
-								  DX11.GetViewMatrix(),
-							      DX11.GetProjectionMatrix(),
-							      model.GetTextureView()))
-		{
-			return 5;
-		}
-		DX11.EndScene();
+		DX11.BeginScene(1.0f, 0.0f, 0.0f, 0.0f);
 
 		window.GetMessage(&msg);
 		if (msg.message == WM_QUIT || inputHandler.IsKeyDown(VK_ESCAPE))
 			done = true;
+
+		DX11.EndScene();
 	}
 
 	std::string videoCardName;
