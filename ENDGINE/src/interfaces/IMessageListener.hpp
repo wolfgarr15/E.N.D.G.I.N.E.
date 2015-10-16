@@ -15,7 +15,7 @@
 ////////////////////////////////////
 // Header Includes
 //---------------------------------
-#include "..\globals\LeanWindows.h"
+#include <Windows.h>
 
 ////////////////////////////////////
 // Interface Declaration

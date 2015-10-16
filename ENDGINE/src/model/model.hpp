@@ -89,18 +89,17 @@ public:
 	bool Load(char*);
 	bool Load(std::string*);
 
-	/* FUTURE: Make these functions private? */
-	bool LoadModel(WCHAR*);
-	bool LoadModel(char*);
-	bool LoadModel(std::string*);
-	bool LoadTexture(WCHAR*);
-
 	int GetVertexCount();
 	Microsoft::WRL::ComPtr<ID3D11Resource> GetTexture();
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetTextureView();
 
 /* Private functions */
 private:
+	bool LoadModel(WCHAR*);
+	bool LoadModel(char*);
+	bool LoadModel(std::string*);
+	bool LoadTexture(WCHAR*);
+
 	// Convert WCHAR* to std::string*
 	std::string* WcharToString(WCHAR*);
 

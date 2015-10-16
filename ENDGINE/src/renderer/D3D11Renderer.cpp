@@ -1,5 +1,7 @@
 ///////////////////////////////////
 // Filename: D3D11Renderer.cpp
+//
+// Author: Wolfe S. Greene
 ///////////////////////////////////
 
 ////////////////////////////////////////////////////////////////
@@ -20,7 +22,7 @@ D3D11Renderer::D3D11Renderer()
 	  m_pRenderTargetView(nullptr),
 	  m_pSwapChain(nullptr)
 {
-	SecureZeroMemory(&m_orthoMatrix, sizeof(DirectX::XMMATRIX));
+	SecureZeroMemory(&m_viewMatrix, sizeof(DirectX::XMMATRIX));
 	SecureZeroMemory(&m_worldMatrix, sizeof(DirectX::XMMATRIX));
 	SecureZeroMemory(&m_projectionMatrix, sizeof(DirectX::XMMATRIX));
 }
@@ -33,7 +35,7 @@ D3D11Renderer::~D3D11Renderer()
 		m_pSwapChain->SetFullscreenState(FALSE, NULL);
 }
 
-PVOID D3D11Renderer::operator new(UINT uMemorySize)
+PVOID D3D11Renderer::operator new(SIZE_T uMemorySize)
 {
 	// Set the alignment of the D3D11Renderer memory block to 16 bytes.
 	//
@@ -69,7 +71,7 @@ BOOL D3D11Renderer::Initialize(HWND hWnd, CONST EngineConfig* pConfig)
 	//       investigate multi-GPU initialization if it is to be a feature.
 	RETURN_IF_FAILS(pFactory->EnumAdapters(0, &pAdapter));
 
-	RETURN_IF_FAILS(SetVideoCardInfo(pAdapter.Get()));
+	RETURN_IF_FALSE(SetVideoCardInfo(pAdapter.Get()));
 
 	// NOTE: As with the adapter enumeration, this is currently
 	//       coded to utilize only one adapter output.
@@ -114,38 +116,38 @@ VOID D3D11Renderer::EndScene()
 	if (m_bVsync)
 	{
 		// Lock to screen refresh rate.
-		m_pSwapChain->Present(1, 0);
+		m_pSwapChain->Present(TRUE, NULL);
 	}
 	else
 	{
 		// Present as fast as possible.
-		m_pSwapChain->Present(0, 0);
+		m_pSwapChain->Present(FALSE, NULL);
 	}
 }
 
-ID3D11Device* D3D11Renderer::GetDevice() CONST
+CONST Microsoft::WRL::ComPtr<ID3D11Device>& D3D11Renderer::GetDevice() CONST
 {
-	return m_pDevice.Get();
+	return m_pDevice;
 }
 
-ID3D11DeviceContext* D3D11Renderer::GetDeviceContext() CONST
+CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& D3D11Renderer::GetDeviceContext() CONST
 {
-	return m_pDeviceContext.Get();
+	return m_pDeviceContext;
 }
 
-VOID D3D11Renderer::GetOrthoMatrix(DirectX::XMMATRIX& orthoMatrix) CONST
+CONST DirectX::XMMATRIX& D3D11Renderer::GetViewMatrix() CONST
 {
-	orthoMatrix = m_orthoMatrix;
+	return m_viewMatrix;
 }
 
-VOID D3D11Renderer::GetProjectionMatrix(DirectX::XMMATRIX& projectionMatrix) CONST
+CONST DirectX::XMMATRIX& D3D11Renderer::GetProjectionMatrix() CONST
 {
-	projectionMatrix = m_projectionMatrix;
+	return m_projectionMatrix;
 }
 
-VOID D3D11Renderer::GetWorldMatrix(DirectX::XMMATRIX& worldMatrix) CONST
+CONST DirectX::XMMATRIX& D3D11Renderer::GetWorldMatrix() CONST
 {
-	worldMatrix = m_worldMatrix;
+	return m_worldMatrix;
 }
 
 SIZE_T D3D11Renderer::GetVideoMemoryMB() CONST
@@ -160,7 +162,7 @@ VOID D3D11Renderer::GetVideoCardName(std::string& videoCardName) CONST
 
 VOID D3D11Renderer::IntializeOrthoMatrix()
 {
-	m_orthoMatrix = DirectX::XMMatrixOrthographicLH((FLOAT)m_iDisplayWidth, 
+	m_viewMatrix = DirectX::XMMatrixOrthographicLH((FLOAT)m_iDisplayWidth, 
 													(FLOAT)m_iDisplayHeight, 
 						                            m_fScreenNear, 
 													m_fScreenFar);
@@ -389,7 +391,7 @@ BOOL D3D11Renderer::SetRefreshParams(IDXGIOutput* pAdapterOutput)
 {
 	
 	std::unique_ptr<DXGI_MODE_DESC[]> pDisplayModeList;
-	UINT numModes;
+	UINT numModes = 0;
 
 	// Get the number of display modes.
 	//

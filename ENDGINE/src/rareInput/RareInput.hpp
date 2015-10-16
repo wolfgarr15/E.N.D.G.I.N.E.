@@ -11,7 +11,7 @@
 // Include Headers
 //-----------------------------
 #include <memory>
-#include "..\globals\LeanWindows.h"
+#include <Windows.h>
 #include "..\interfaces\IMessageListener.hpp"
 #include "RareInputDevice.hpp"
 

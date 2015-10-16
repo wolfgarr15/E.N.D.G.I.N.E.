@@ -22,14 +22,14 @@ Model::Model(const Model& other) {}
 Model::~Model() {}
 
 /* Public functions */
-inline bool Model::Initialize(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context) {
+bool Model::Initialize(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context) {
 	m_device = device;
 	m_context = context;
 
 	return true;
 }
 
-inline void Model::Render() {
+void Model::Render() {
 	Render(m_context);
 }
 
@@ -55,15 +55,15 @@ bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::Co
 	return Initialize(device,context) && Load(modelFile, textureFile);
 }
 
-inline bool Model::Load(WCHAR* modelFile, WCHAR* textureFile) {
+bool Model::Load(WCHAR* modelFile, WCHAR* textureFile) {
 	return LoadModel(modelFile) && LoadTexture(textureFile);
 }
 
-inline bool Model::Load(char* modelFile, WCHAR* textureFile) {
+bool Model::Load(char* modelFile, WCHAR* textureFile) {
 	return LoadModel(modelFile) && LoadTexture(textureFile);
 }
 
-inline bool Model::Load(std::string* modelFile, WCHAR* textureFile) {
+bool Model::Load(std::string* modelFile, WCHAR* textureFile) {
 	return LoadModel(modelFile) && LoadTexture(textureFile);
 }
 
@@ -79,27 +79,27 @@ bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::Co
 	return Initialize(device,context) && Load(modelFile);
 }
 
-inline bool Model::Load(WCHAR* modelFile) {
+bool Model::Load(WCHAR* modelFile) {
 	return Load(WcharToString(modelFile));
 }
 
-inline bool Model::Load(char* modelFile) {
+bool Model::Load(char* modelFile) {
 	return Load((std::string*) modelFile);
 }
 
-inline bool Model::Load(std::string* modelFile) {
+bool Model::Load(std::string* modelFile) {
 	return LoadModel(modelFile);
 }
 
-bool Model::LoadModel(WCHAR* filename) {
+inline bool Model::LoadModel(WCHAR* filename) {
 	return LoadModel(WcharToString(filename));
 }
 
-bool Model::LoadModel(char* filename) {
+inline bool Model::LoadModel(char* filename) {
 	return LoadModel((std::string*) filename);
 }
 
-bool Model::LoadModel(std::string* filename) {
+inline bool Model::LoadModel(std::string* filename) {
 	// Buffer the file
 	std::ifstream in(*filename);
 	if (in.fail() || !in) {
@@ -140,7 +140,7 @@ bool Model::LoadModel(std::string* filename) {
 	return true;
 }
 
-bool Model::LoadTexture(WCHAR* filename) {
+inline bool Model::LoadTexture(WCHAR* filename) {
 	m_texture = new Texture;
 	if (!m_texture) {
 		return false;
@@ -257,7 +257,7 @@ int Model::GetFileType(const std::string filename) {
 		return FILETYPE_OTHER;
 }
 
-bool Model::LoadTextModel(const std::string contents) {
+inline bool Model::LoadTextModel(const std::string contents) {
 	// Create a std::istringstream buffer for easier variable extraction
 	std::istringstream ss(contents);
 
@@ -306,7 +306,7 @@ bool Model::LoadTextModel(const std::string contents) {
 	return true;
 }
 
-bool Model::LoadObjModel(const std::string contents) {
+inline bool Model::LoadObjModel(const std::string contents) {
 	// Create an istringstream buffer for easier variable extraction
 	std::istringstream ss(contents);
 

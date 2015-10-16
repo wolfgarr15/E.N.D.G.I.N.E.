@@ -11,7 +11,7 @@
 // Header Includes
 //-------------------------------------------------------
 #include <string>
-#include "..\globals\LeanWindows.h"
+#include <Windows.h>
 #include "..\interfaces\IMessageListener.hpp"
 #include "..\config\EngineConfig.hpp"
 

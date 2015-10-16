@@ -11,7 +11,7 @@
 // Include Headers
 //-----------------------------
 #include <vector>
-#include "..\globals\LeanWindows.h"
+#include <Windows.h>
 
 ///////////////////////////////
 // Static Enumerator
