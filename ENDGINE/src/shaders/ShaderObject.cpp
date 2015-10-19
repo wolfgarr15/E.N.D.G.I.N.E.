@@ -291,8 +291,9 @@ VOID ShaderObject::OutputShaderErrors(CONST Microsoft::WRL::ComPtr<ID3D10Blob>& 
 	}
 	else
 	{
-		fout << "Error: Shader file " << shaderFilename.c_str()
-			<< " not found!" << std::endl;
+		std::string fileNameString = Convert::Wc_strToString(shaderFilename.c_str());
+		fout << "Error: Shader file " << fileNameString.c_str()
+			 << " not found!" << std::endl;
 	}
 
 	fout.close();

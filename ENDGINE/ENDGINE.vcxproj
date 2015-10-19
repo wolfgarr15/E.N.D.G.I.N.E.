@@ -119,6 +119,8 @@
   <ItemGroup>
     <None Include="Engine.ini" />
     <None Include="EngineDefault.ini" />
+    <None Include="psTextureShader.hlsli" />
+    <None Include="vsTextureShader.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

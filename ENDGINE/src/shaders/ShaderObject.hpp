@@ -18,6 +18,7 @@
 #include <fstream>
 #include <vector>
 #include <wrl.h>
+#include "../globals/functions.hpp"
 #include "../globals/macros.h"
 
 ////////////////////////////////////

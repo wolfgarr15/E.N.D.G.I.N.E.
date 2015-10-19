@@ -2,36 +2,38 @@
  * File:    texture.cpp                                                       *
  * Author:  William Gehring                                                   *
  * Created: 2015-08-30                                                        *
+ *                                                                            *
+ * Modified: Wolfe S. Greene                                                  *
  ******************************************************************************/
 
 #include "texture.hpp"
 
 Texture::Texture()
 	: m_device(nullptr),
-		m_context(nullptr),
-		m_texture(nullptr),
-		m_textureView(nullptr) {}
+	  m_context(nullptr),
+	  m_texture(nullptr),
+	  m_textureView(nullptr)
+{
+	// DO NOTHING.
+}
 
-Texture::Texture(const Texture& other) {}
-
-Texture::~Texture() {}
-
-bool Texture::Initialize(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context) {
-	m_device = device;
-	m_context = context;
-
+bool Texture::Initialize(CONST Microsoft::WRL::ComPtr<ID3D11Device>& device, 
+						 CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& context) 
+{
+	RETURN_IF_FAILS(device.As(&m_device));
+	RETURN_IF_FAILS(context.As(&m_context));
 	return true;
 }
 
-bool Texture::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, WCHAR* filename) {
+bool Texture::Load(CONST Microsoft::WRL::ComPtr<ID3D11Device>& device, 
+				   CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& context, 
+				   CONST std::wstring& filename) 
+{
 	return Initialize(device, context) && Load(filename);
 }
 
-bool Texture::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::wstring* filename) {
-	return Initialize(device, context) && Load(filename);
-}
-
-bool Texture::Load(WCHAR* filename) {
+bool Texture::Load(CONST std::wstring& filename) 
+{
 	if (!m_device) {
 		throw ERR_NO_DEVICE;
 	}
@@ -62,19 +64,18 @@ bool Texture::Load(WCHAR* filename) {
 	return true;
 }
 
-inline bool Texture::Load(std::wstring* filename) {
-	return Load((WCHAR*) filename->c_str());
-}
-
-Microsoft::WRL::ComPtr<ID3D11Resource> Texture::GetTexture() {
+CONST Microsoft::WRL::ComPtr<ID3D11Resource>& Texture::GetTextureResource() CONST
+{
 	return m_texture;
 }
 
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Texture::GetTextureView() {
+CONST Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& Texture::GetTextureView() CONST
+{
 	return m_textureView;
 }
 
-int Texture::GetFileType(const std::wstring filename) {
+int Texture::GetFileType(CONST std::wstring& filename) CONST 
+{
 	std::wstring ext = filename.substr(filename.find_last_of(L'.') + 1); // get rid of the .
 
 	if (boost::iequals(ext, L"dds"))
@@ -91,18 +92,24 @@ int Texture::GetFileType(const std::wstring filename) {
 		return FILETYPE_OTHER;
 }
 
-bool Texture::LoadDDSTexture(WCHAR* filename) {
-	if (FAILED(DirectX::CreateDDSTextureFromFile(m_device.Get(), m_context.Get(), filename, &m_texture, &m_textureView, 0))) {
-		return false;
-	}
-
+bool Texture::LoadDDSTexture(CONST std::wstring& filename) 
+{
+	RETURN_IF_FAILS(DirectX::CreateDDSTextureFromFile(m_device.Get(), 
+												 m_context.Get(), 
+												 filename.c_str(), 
+												 &m_texture, 
+												 &m_textureView, 
+												 0))
 	return true;
 }
 
-bool Texture::LoadWICTexture(WCHAR* filename) {
-	if (FAILED(DirectX::CreateWICTextureFromFile(m_device.Get(), m_context.Get(), filename, &m_texture, &m_textureView, 0))) {
-		return false;
-	}
-
+bool Texture::LoadWICTexture(CONST std::wstring& filename) 
+{
+	RETURN_IF_FAILS(DirectX::CreateWICTextureFromFile(m_device.Get(), 
+													  m_context.Get(), 
+													  filename.c_str(), 
+													  &m_texture, 
+													  &m_textureView,
+													  0))
 	return true;
 }

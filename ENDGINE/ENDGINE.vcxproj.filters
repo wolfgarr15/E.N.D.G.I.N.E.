@@ -135,5 +135,7 @@
   <ItemGroup>
     <None Include="Engine.ini" />
     <None Include="EngineDefault.ini" />
+    <None Include="vsTextureShader.hlsli" />
+    <None Include="psTextureShader.hlsli" />
   </ItemGroup>
 </Project>

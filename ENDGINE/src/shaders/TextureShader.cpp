@@ -27,9 +27,9 @@ bool TextureShader::Initialize()
 	AppendVertexInputDescElements(inputDesc);
 
 	// Initialize the shaders.
-	RETURN_IF_FALSE(InitializeShaders(L"vsTexture.hlsli", 
+	RETURN_IF_FALSE(InitializeShaders(L"vsTextureShader.hlsli", 
 									  "TextureVertexShader",
-									  L"psTexture.hlsli",
+									  L"psTextureShader.hlsli",
 									  "TexturePixelShader",
 									  inputDesc));
 

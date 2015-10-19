@@ -75,15 +75,15 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 
 		DX11.BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 		camera.RenderView();
-		model.Render();
-		if (!textureShader.Render(model.GetVertexCount(),
+		//model.Render();
+		/*if (!textureShader.Render(model.GetVertexCount(),
 								  DX11.GetWorldMatrix(),
 								  DX11.GetViewMatrix(),
 							      DX11.GetProjectionMatrix(),
 							      model.GetTextureView()))
 		{
 			return 5;
-		}
+		}*/
 		DX11.EndScene();
 
 		window.GetMessage(&msg);
