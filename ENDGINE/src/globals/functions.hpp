@@ -21,7 +21,7 @@
 //---------------------------------------------------------------------
 namespace Convert
 {
-	inline std::string Wc_strToString(const wchar_t* wc_str)
+	inline static std::string Wc_strToString(const wchar_t* wc_str)
 	{
 		std::wstring tmp(wc_str);
 		return std::string(tmp.begin(), tmp.end());

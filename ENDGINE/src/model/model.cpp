@@ -10,98 +10,68 @@
 Model::Model()
 	:	m_device(nullptr),
 		m_context(nullptr),
-		m_vertices(nullptr)
+		m_vertices(nullptr),
+		m_indices(nullptr),
+		m_model(nullptr)
 {
-	m_model = 0;
-	m_texture = 0;
 	m_vertexCount = 0;
 }
 
-Model::Model(const Model& other) {}
-
-Model::~Model() {}
-
 /* Public functions */
-inline bool Model::Initialize(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context) {
-	m_device = device;
-	m_context = context;
-
+bool Model::Initialize(CONST Microsoft::WRL::ComPtr<ID3D11Device>& device, 
+	                   CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& context) 
+{
+	//
+	// NOTE: Use the "ComPtr::As" function to store a copy of another ComPtr.
+	//		 This properly increases the reference count on the COM interface.
+	//       --- Wolfe
+	RETURN_IF_FAILS(device.As(&m_device));
+	RETURN_IF_FAILS(context.As(&m_context));
 	return true;
 }
 
-inline void Model::Render() {
-	Render(m_context);
-}
-
-void Model::Render(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context) {
+VOID Model::Render() 
+{
 	if (m_vertexCount == 0) {
 		return;
 	}
-	if (!context) {
+
+	//
+	// NOTE: From what I understand, exception checking is VERY SLOW, so we
+	//       should avoid using exceptions in the render loop. Something
+	//       to discuss and change in the future. --- Wolfe
+	//
+	if (!m_context) {
 		throw ERR_NO_DEVICE_CONTEXT;
 	}
-	RenderBuffers(context);
+	RenderBuffers();
 }
 
-bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, WCHAR* modelFile, WCHAR* textureFile) {
-	return Initialize(device,context) && Load(WcharToString(modelFile), textureFile);
-}
-
-bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, char* modelFile, WCHAR* textureFile) {
-	return Initialize(device,context) && Load((std::string*) modelFile, textureFile);
-}
-
-bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::string* modelFile, WCHAR* textureFile) {
+bool Model::Load(CONST Microsoft::WRL::ComPtr<ID3D11Device>& device, 
+				 CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& context, 
+				 CONST std::string& modelFile, 
+				 CONST std::wstring& textureFile)
+{
 	return Initialize(device,context) && Load(modelFile, textureFile);
 }
 
-inline bool Model::Load(WCHAR* modelFile, WCHAR* textureFile) {
+bool Model::Load(CONST std::string& modelFile, CONST std::wstring& textureFile) {
 	return LoadModel(modelFile) && LoadTexture(textureFile);
 }
 
-inline bool Model::Load(char* modelFile, WCHAR* textureFile) {
-	return LoadModel(modelFile) && LoadTexture(textureFile);
-}
-
-inline bool Model::Load(std::string* modelFile, WCHAR* textureFile) {
-	return LoadModel(modelFile) && LoadTexture(textureFile);
-}
-
-bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, WCHAR* modelFile) {
+bool Model::Load(CONST Microsoft::WRL::ComPtr<ID3D11Device>& device, 
+				 CONST Microsoft::WRL::ComPtr<ID3D11DeviceContext>& context, 
+				 CONST std::string& modelFile) {
 	return Initialize(device,context) && Load(modelFile);
 }
 
-bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, char* modelFile) {
-	return Initialize(device,context) && Load(modelFile);
-}
-
-bool Model::Load(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::string* modelFile) {
-	return Initialize(device,context) && Load(modelFile);
-}
-
-inline bool Model::Load(WCHAR* modelFile) {
-	return Load(WcharToString(modelFile));
-}
-
-inline bool Model::Load(char* modelFile) {
-	return Load((std::string*) modelFile);
-}
-
-inline bool Model::Load(std::string* modelFile) {
+bool Model::Load(CONST std::string& modelFile) {
 	return LoadModel(modelFile);
 }
 
-bool Model::LoadModel(WCHAR* filename) {
-	return LoadModel(WcharToString(filename));
-}
-
-bool Model::LoadModel(char* filename) {
-	return LoadModel((std::string*) filename);
-}
-
-bool Model::LoadModel(std::string* filename) {
+inline bool Model::LoadModel(CONST std::string& modelFile) {
 	// Buffer the file
-	std::ifstream in(*filename);
+	std::ifstream in(modelFile);
 	if (in.fail() || !in) {
 		throw ERR_UNABLE_TO_OPEN_FILE;
 	}
@@ -115,7 +85,7 @@ bool Model::LoadModel(std::string* filename) {
 	in.close();
 
 	bool success = false;
-	switch(GetFileType(*filename)) {
+	switch(GetFileType(modelFile)) {
 		case FILETYPE_TXT:
 			success = LoadTextModel(contents);
 			break;
@@ -133,61 +103,44 @@ bool Model::LoadModel(std::string* filename) {
 		throw ERR_UNABLE_TO_LOAD_FILE;
 	}
 
-	if (!InitializeBuffers(m_device)) {
-		return false;
-	}
+	// Initialize buffers.
+	RETURN_IF_FALSE(InitializeBuffers())
 
 	return true;
 }
 
-bool Model::LoadTexture(WCHAR* filename) {
-	m_texture = new Texture;
-	if (!m_texture) {
-		return false;
-	}
-
-	return m_texture->Load(m_device, m_context, filename);
+inline bool Model::LoadTexture(CONST std::wstring& textureFile) 
+{
+	return m_texture.Load(m_device, m_context, textureFile);
 }
 
-int Model::GetVertexCount() {
+int Model::GetVertexCount() 
+{
 	return m_vertexCount;
 }
 
-Microsoft::WRL::ComPtr<ID3D11Resource> Model::GetTexture() {
-	return m_texture->GetTexture();
+CONST Microsoft::WRL::ComPtr<ID3D11Resource>& Model::GetTextureResource() CONST
+{
+	return m_texture.GetTextureResource();
 }
 
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Model::GetTextureView() {
-	return m_texture->GetTextureView();
+CONST Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& Model::GetTextureView() CONST
+{
+	return m_texture.GetTextureView();
 }
 
 /* Private functions */
-inline std::string* Model::WcharToString(WCHAR* wchar) {
-	std::wstring ws(wchar);
-	return &std::string(ws.begin(),ws.end());
-}
-
-inline bool Model::InitializeBuffers() {
-	return InitializeBuffers(m_device);
-}
-
-inline bool Model::InitializeBuffers(Microsoft::WRL::ComPtr<ID3D11Device> device) {
+inline bool Model::InitializeBuffers() 
+{
 	if (m_vertexCount == 0) {
 		throw ERR_NO_VERTICES;
 	}
 
-	Vertex* vertices;
-	unsigned long* indices;
-
-	vertices = new Vertex[m_vertexCount];
-	indices = new unsigned long[m_vertexCount];
-	if (!vertices || !indices) {
-		return false;
-	}
+	std::unique_ptr<Vertex[]> vertices = std::make_unique<Vertex[]>(m_vertexCount);
+	std::unique_ptr<ULONG[]> indices = std::make_unique<ULONG[]>(m_vertexCount);
 
 	for (int i = 0; i < m_vertexCount; i++) {
 		vertices[i] = m_model[i];
-
 		indices[i] = i;
 	}
 
@@ -202,21 +155,16 @@ inline bool Model::InitializeBuffers(Microsoft::WRL::ComPtr<ID3D11Device> device
 
 	D3D11_SUBRESOURCE_DATA vertexData;
 
-	vertexData.pSysMem = vertices;
+	vertexData.pSysMem = vertices.get();
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
-	if (FAILED(device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertices))) {
-		return false;
-	}
-
-	delete[] vertices;
-	vertices = 0;
+	RETURN_IF_FAILS(m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertices))
 
 	D3D11_BUFFER_DESC indexBufferDesc;
 
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_vertexCount;
+	indexBufferDesc.ByteWidth = sizeof(ULONG) * m_vertexCount;
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
@@ -224,29 +172,26 @@ inline bool Model::InitializeBuffers(Microsoft::WRL::ComPtr<ID3D11Device> device
 
 	D3D11_SUBRESOURCE_DATA indexData;
 
-	indexData.pSysMem = indices;
+	indexData.pSysMem = indices.get();
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
 
-	if (FAILED(device->CreateBuffer(&indexBufferDesc, &indexData, &m_indices))) {
-		return false;
-	}
-
-	delete[] indices;
-	indices = 0;
+	RETURN_IF_FAILS(m_device->CreateBuffer(&indexBufferDesc, &indexData, &m_indices))
 
 	return true;
 }
 
-void Model::RenderBuffers(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context) {
+void Model::RenderBuffers() 
+{
 	unsigned int stride = sizeof(Vertex), offset = 0;
 
-	context->IASetVertexBuffers(0, 1, &m_vertices, &stride, &offset);
-	context->IASetIndexBuffer(m_indices.Get(), DXGI_FORMAT_R32_UINT, 0);
-	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_context->IASetVertexBuffers(0, 1, &m_vertices, &stride, &offset);
+	m_context->IASetIndexBuffer(m_indices.Get(), DXGI_FORMAT_R32_UINT, 0);
+	m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-int Model::GetFileType(const std::string filename) {
+int Model::GetFileType(CONST std::string& filename) CONST
+{
 	std::string ext = filename.substr(filename.find_last_of('.') + 1); // get rid of the .
 
 	if (boost::iequals(ext, "obj"))
@@ -257,7 +202,8 @@ int Model::GetFileType(const std::string filename) {
 		return FILETYPE_OTHER;
 }
 
-bool Model::LoadTextModel(const std::string contents) {
+inline bool Model::LoadTextModel(CONST std::string& contents) 
+{
 	// Create a std::istringstream buffer for easier variable extraction
 	std::istringstream ss(contents);
 
@@ -269,13 +215,9 @@ bool Model::LoadTextModel(const std::string contents) {
 		}
 		ss.get(input);
 	}
-
 	ss >> m_vertexCount;
-
-	m_model = new Vertex[m_vertexCount];
-	if (!m_model) {
-		return false;
-	}
+	m_model = std::make_unique<Vertex[]>(m_vertexCount);
+	
 
 	ss.get(input);
 	while (input != ':') {
@@ -306,7 +248,8 @@ bool Model::LoadTextModel(const std::string contents) {
 	return true;
 }
 
-bool Model::LoadObjModel(const std::string contents) {
+inline bool Model::LoadObjModel(CONST std::string& contents) 
+{
 	// Create an istringstream buffer for easier variable extraction
 	std::istringstream ss(contents);
 
@@ -316,25 +259,39 @@ bool Model::LoadObjModel(const std::string contents) {
 	pCount = tCount = nCount = fCount = 0;
 
 	ss.get(input);
-	while (!ss.eof()) {
-		if (input == 'v') {
+	while (!ss.eof()) 
+	{
+		if (input == 'v') 
+		{
 			ss.get(input);
 			if (input == ' ') { pCount++; }
 			else if (input == 't') { tCount++; }
-			else if (input == 'n') { nCount++;}
-		} else if (input == 'f') {
+			else if (input == 'n') { nCount++; }
+		}
+		else if (input == 'f') 
+		{
 			ss.get(input);
 			if (input == ' ') { fCount++; }
 		}
-
-		while (input != '\n') {
-			if (ss.eof()) {
-				throw ERR_FILE_INCOMPLETE;
-			}
-			ss.get(input);
+		
+		//
+		// NOTE: This is a quicker way to get rid of "garbage" lines.
+		//       --- Wolfe
+		//
+		std::string garbage;
+		std::getline(ss, garbage);
+		if (ss.eof()) {
+			throw ERR_FILE_INCOMPLETE;
 		}
-
 		ss.get(input);
+
+		//
+		// NOTE: This is a safeguard against an an empty line.
+		//       Without this check, the loop will skip a line following
+		//       an empty line. --- Wolfe
+		//
+		if (input == '\n')
+			ss.get(input);
 	}
 
 	if (!(pCount || tCount || nCount || fCount)) {
@@ -343,19 +300,14 @@ bool Model::LoadObjModel(const std::string contents) {
 
 	m_vertexCount = fCount * 3;
 
-	DirectX::XMFLOAT3 *positions, *normals;
-	DirectX::XMFLOAT2 *texcoords;
+	std::unique_ptr<DirectX::XMFLOAT3[]> positions = std::make_unique<DirectX::XMFLOAT3[]>(pCount);
+	std::unique_ptr<DirectX::XMFLOAT3[]> normals = std::make_unique<DirectX::XMFLOAT3[]>(nCount);
+	std::unique_ptr<DirectX::XMFLOAT2[]> texcoords = std::make_unique<DirectX::XMFLOAT2[]>(tCount);
+
 	struct Face {
 		int p, t, n;
-	} *faces;
-
-	positions = new DirectX::XMFLOAT3[pCount];
-	texcoords = new DirectX::XMFLOAT2[tCount];
-	normals = new DirectX::XMFLOAT3[tCount];
-	faces = new Face[m_vertexCount];
-	if (!positions || !texcoords || !normals || !faces) {
-		return false;
-	}
+	};
+	std::unique_ptr<Face[]> faces = std::make_unique<Face[]>(fCount); // CHECK THIS!!!
 
 	int vInd, tInd, nInd, fInd;
 	vInd = tInd = nInd = fInd = 0;
@@ -370,71 +322,75 @@ bool Model::LoadObjModel(const std::string contents) {
 	Face f;
 
 	ss.get(input);
-	while (!ss.eof()) {
-		if (input == 'v') {
+	while (!ss.eof()) 
+	{
+		if (input == 'v') 
+		{
 			ss.get(input);
-			if (input == ' ') {
+			if (input == ' ') 
+			{
 				ss >> p.x >> p.y >> p.z;
 				p.z = -p.z; // Invert z coordinate for left-hand coordinate conversion
 				positions[vInd++] = p;
-			} else if (input == 't') {
+			} 
+
+			else if (input == 't') 
+			{
 				ss >> t.x >> t.y;
 				t.y = 1.0f - t.y; // Invert p texture coordinate for left-hand coordinate system
 				texcoords[tInd++] = t;
-			} else if (input == 'n') {
+			} 
+
+			else if (input == 'n')
+			{
 				ss >> p.x >> p.y >> p.z;
 				p.z = -p.z; // Invert z normal for left-hand coordinate system
 				normals[nInd++] = p;
 			}
-		} else if (input == 'f') {
-			int t = fInd;
-			for (int i = t + 2; i >= t; i--) {
+
+		} 
+		
+		else if (input == 'f') 
+		{
+			for (int i = 0; i > 3; i++)
+			{
 				ss >> f.p >> input >> f.t >> input >> f.n;
 				faces[i] = f;
-				fInd++;
 			}
+			fInd++;
 		}
 
-		while (input != '\n') {
-			if (ss.eof()) {
-				throw ERR_FILE_INCOMPLETE;
-			}
-			ss.get(input);
+		//
+		// NOTE: This is a quicker way to get rid of "garbage" lines.
+		//       --- Wolfe
+		//
+		std::string garbage;
+		std::getline(ss, garbage);
+		if (ss.eof()) {
+			throw ERR_FILE_INCOMPLETE;
 		}
-
 		ss.get(input);
+
+		//
+		// NOTE: This is a safeguard against an an empty line.
+		//       Without this check, the loop will skip a line following
+		//       an empty line. --- Wolfe
+		//
+		if (input == '\n')
+			ss.get(input);
 	}
 
-	// Clear the istringstream
-	ss.str("");
-	ss.clear();
-
-	m_model = new Vertex[m_vertexCount];
-	if (!m_model) {
-		return false;
-	}
+	m_model = std::make_unique<Vertex[]>(m_vertexCount);
 
 	Vertex v;
-	int j = 0;
+	SecureZeroMemory(&v, sizeof(v));
 	for (int i = 0; i < m_vertexCount; i++) {
 		f = faces[i];
 		v.position = positions[f.p - 1];
 		v.tex = texcoords[f.t - 1];
 		v.normal = normals[f.n - 1];
-		m_model[j++] = v;
+		m_model[i] = v;
 	}
-
-	delete[] positions;
-	positions = 0;
-
-	delete[] normals;
-	normals = 0;
-
-	delete[] texcoords;
-	texcoords = 0;
-
-	delete[] faces;
-	faces = 0;
 
 	return true;
 }

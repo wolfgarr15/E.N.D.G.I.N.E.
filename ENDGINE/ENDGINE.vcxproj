@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
+    <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
+    <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -15,13 +15,13 @@
     <RootNamespace>ENDGINE</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
@@ -31,35 +31,42 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)\bin\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\build\$(Configuration)\</IntDir>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>.\bin\$(Configuration)\</OutDir>
+    <IntDir>.\build\$(Configuration)\</IntDir>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>.\bin\$(Configuration)\</OutDir>
+    <IntDir>.\build\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(BOOST_ROOT);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WIN32_WINNT=0x0600;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(BOOST_ROOT);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WIN32_WINNT=0x0600;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -68,37 +75,52 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\camera\Camera.cpp" />
     <ClCompile Include="src\config\configObject\ConfigObject.cpp" />
     <ClCompile Include="src\config\configObject\INIconfig.cpp" />
     <ClCompile Include="src\config\configObject\JSONconfig.cpp" />
     <ClCompile Include="src\config\configObject\XMLconfig.cpp" />
     <ClCompile Include="src\config\EngineConfig.cpp" />
+    <ClCompile Include="src\model\texture\DDSTextureLoader\DDSTextureLoader.cpp" />
+    <ClCompile Include="src\model\texture\WICTextureLoader\WICTextureLoader.cpp" />
+    <ClCompile Include="src\model\model.cpp" />
+    <ClCompile Include="src\model\texture\texture.cpp" />
     <ClCompile Include="src\rareInput\RareInput.cpp" />
     <ClCompile Include="src\rareInput\RareInputDevice.cpp" />
     <ClCompile Include="src\renderer\D3D11Renderer.cpp" />
+    <ClCompile Include="src\shaders\ShaderObject.cpp" />
+    <ClCompile Include="src\shaders\TextureShader.cpp" />
     <ClCompile Include="src\window\BaseWindow.cpp" />
     <ClCompile Include="src\window\MainWindow.cpp" />
     <ClCompile Include="src\winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\camera\Camera.hpp" />
     <ClInclude Include="src\config\configObject\ConfigObject.hpp" />
     <ClInclude Include="src\config\configObject\INIconfig.hpp" />
     <ClInclude Include="src\config\configObject\JSONconfig.hpp" />
     <ClInclude Include="src\config\configObject\XMLconfig.hpp" />
     <ClInclude Include="src\config\EngineConfig.hpp" />
+    <ClInclude Include="src\model\texture\DDSTextureLoader\DDSTextureLoader.h" />
     <ClInclude Include="src\globals\functions.hpp" />
-    <ClInclude Include="src\globals\LeanWindows.h" />
     <ClInclude Include="src\globals\macros.h" />
+    <ClInclude Include="src\model\texture\WICTextureLoader\WICTextureLoader.h" />
     <ClInclude Include="src\interfaces\IMessageListener.hpp" />
+    <ClInclude Include="src\model\model.hpp" />
+    <ClInclude Include="src\model\texture\texture.hpp" />
     <ClInclude Include="src\rareInput\RareInput.hpp" />
     <ClInclude Include="src\rareInput\RareInputDevice.hpp" />
     <ClInclude Include="src\renderer\D3D11Renderer.hpp" />
+    <ClInclude Include="src\shaders\ShaderObject.hpp" />
+    <ClInclude Include="src\shaders\TextureShader.hpp" />
     <ClInclude Include="src\window\BaseWindow.hpp" />
     <ClInclude Include="src\window\MainWindow.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine.ini" />
     <None Include="EngineDefault.ini" />
+    <None Include="psTextureShader.hlsli" />
+    <None Include="vsTextureShader.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

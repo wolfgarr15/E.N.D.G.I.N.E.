@@ -10,7 +10,7 @@
 ///////////////////////////////
 // Include Headers
 //-----------------------------
-#include "..\globals\LeanWindows.h"
+#include <Windows.h>
 #include "configObject\INIconfig.hpp"
 
 ////////////////////////////////////
