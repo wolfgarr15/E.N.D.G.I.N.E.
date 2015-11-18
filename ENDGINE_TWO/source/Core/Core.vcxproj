@@ -96,13 +96,13 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;CORE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>D:\Visual Studio 2013\Repos\E.N.D.G.I.N.E\ENDGINE_TWO\source\EventManager;D:\Visual Studio 2013\Repos\E.N.D.G.I.N.E\ENDGINE_TWO\source\ViewManager;D:\Visual Studio 2013\Repos\E.N.D.G.I.N.E\ENDGINE_TWO\source\ModelManager;D:\Visual Studio 2013\Repos\E.N.D.G.I.N.E\ENDGINE_TWO\source\Globals;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(Configuration)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -133,14 +133,14 @@ xcopy /Q /Y "$(SolutionDir)\source\$(TargetName)\E$(TargetName).h" "$(SolutionDi
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;CORE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>D:\Visual Studio 2013\Repos\E.N.D.G.I.N.E\ENDGINE_TWO\source\EventManager;D:\Visual Studio 2013\Repos\E.N.D.G.I.N.E\ENDGINE_TWO\source\ViewManager;D:\Visual Studio 2013\Repos\E.N.D.G.I.N.E\ENDGINE_TWO\source\ModelManager;D:\Visual Studio 2013\Repos\E.N.D.G.I.N.E\ENDGINE_TWO\source\Globals;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(Configuration)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -177,7 +177,10 @@ xcopy /Q /Y "$(SolutionDir)\source\$(TargetName)\E$(TargetName).h" "$(SolutionDi
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EventManager\EventManager.vcxproj">
