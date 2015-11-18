@@ -37,6 +37,5 @@ bool ECore::Run()
 
 void ECore::Shutdown()
 {
-	m_ViewManager.Shutdown();
 	return;
 }

@@ -89,18 +89,19 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
-      <AdditionalIncludeDirectories>D:\Visual Studio 2013\Repos\E.N.D.G.I.N.E\ENDGINE_TWO\source\EventManager;D:\Visual Studio 2013\Repos\E.N.D.G.I.N.E\ENDGINE_TWO\source\ViewManager;D:\Visual Studio 2013\Repos\E.N.D.G.I.N.E\ENDGINE_TWO\source\ModelManager;D:\Visual Studio 2013\Repos\E.N.D.G.I.N.E\ENDGINE_TWO\source\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Visual Studio 2013\Repos\E.N.D.G.I.N.E\ENDGINE_TWO\endgine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(SolutionDir)\endgine\lib\*lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Q /Y "$(SolutionDir)\bin\$(Configuration)\Core\*" "bin\$(Configuration)"
-xcopy /Q /Y "$(SolutionDir)\bin\$(Configuration)\ViewManager\*" "bin\$(Configuration)"
-xcopy /Q /Y "$(SolutionDir)\bin\$(Configuration)\ModelManager\*" "bin\$(Configuration)"
-xcopy /Q /Y "$(SolutionDir)\bin\$(Configuration)\EventManager\*" "bin\$(Configuration)"</Command>
-      <Message>Copy engine DLL files to TestApp bin directory</Message>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -125,22 +126,23 @@ xcopy /Q /Y "$(SolutionDir)\bin\$(Configuration)\EventManager\*" "bin\$(Configur
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
-      <AdditionalIncludeDirectories>D:\Visual Studio 2013\Repos\E.N.D.G.I.N.E\ENDGINE_TWO\source\EventManager;D:\Visual Studio 2013\Repos\E.N.D.G.I.N.E\ENDGINE_TWO\source\ViewManager;D:\Visual Studio 2013\Repos\E.N.D.G.I.N.E\ENDGINE_TWO\source\ModelManager;D:\Visual Studio 2013\Repos\E.N.D.G.I.N.E\ENDGINE_TWO\source\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Visual Studio 2013\Repos\E.N.D.G.I.N.E\ENDGINE_TWO\endgine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>$(SolutionDir)\endgine\lib\*lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Q /Y "$(SolutionDir)\bin\$(Configuration)\Core\*" "bin\$(Configuration)"
-xcopy /Q /Y "$(SolutionDir)\bin\$(Configuration)\ViewManager\*" "bin\$(Configuration)"
-xcopy /Q /Y "$(SolutionDir)\bin\$(Configuration)\ModelManager\*" "bin\$(Configuration)"
-xcopy /Q /Y "$(SolutionDir)\bin\$(Configuration)\EventManager\*" "bin\$(Configuration)"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Copy engine DLL files to TestApp bin directory</Message>
+      <Message>
+      </Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

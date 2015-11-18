@@ -71,16 +71,16 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)\bin\$(Configuration)\ModelManager\</OutDir>
-    <IntDir>$(SolutionDir)\build\$(Configuration)\ModelManager\</IntDir>
+    <OutDir>$(Configuration)\</OutDir>
+    <IntDir>Build\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)\bin\$(Configuration)\ModelManager\</OutDir>
-    <IntDir>$(SolutionDir)\build\$(Configuration)\ModelManager\</IntDir>
+    <OutDir>$(Configuration)\</OutDir>
+    <IntDir>Build\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -108,6 +108,10 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Q /Y "$(SolutionDir)\source\$(TargetName)\$(Configuration)\*" "$(SolutionDir)\endgine\lib\$(Configuration)\"
+xcopy /Q /Y "$(SolutionDir)\source\$(TargetName)\E$(TargetName).h" "$(SolutionDir)\endgine\include\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -143,6 +147,10 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Q /Y "$(SolutionDir)\source\$(TargetName)\$(Configuration)\*" "$(SolutionDir)\endgine\lib\$(Configuration)\"
+xcopy /Q /Y "$(SolutionDir)\source\$(TargetName)\E$(TargetName).h" "$(SolutionDir)\endgine\include\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
