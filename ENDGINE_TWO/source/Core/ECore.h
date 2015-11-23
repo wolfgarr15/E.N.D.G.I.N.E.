@@ -11,15 +11,14 @@
 // DLL Export Macros
 //--------------------------------------------------------------------
 #ifdef CORE_EXPORTS
-#define CORE_API __declspec(dllexport)
+	#define CORE_API __declspec(dllexport)
 #else
-#define CORE_API __declspec(dllimport)
+	#define CORE_API __declspec(dllimport)
 #endif
 
 //////////////////////////////////////////////////////////////////////
 // External Header Includes
 //--------------------------------------------------------------------
-#pragma once
 #include "EModelManager.h"
 #include "EViewManager.h"
 #include "EEventManager.h"

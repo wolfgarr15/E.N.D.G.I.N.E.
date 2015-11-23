@@ -12,15 +12,14 @@
 // DLL Export Macros
 //-------------------------------------------------------------------
 #ifdef VIEWMANAGER_EXPORTS
-#define VIEWMANAGER_API __declspec(dllexport)
+	#define VIEWMANAGER_API __declspec(dllexport)
 #else
-#define VIEWMANAGER_API __declspec(dllimport)
+	#define VIEWMANAGER_API __declspec(dllimport)
 #endif
 
 //////////////////////////////////////////////////////////////////////
 // External Header Includes
 //--------------------------------------------------------------------
-#pragma once
 
 /////////////////////////////////////////////////////////////////////
 // Class Definition

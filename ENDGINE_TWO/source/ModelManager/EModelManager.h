@@ -12,15 +12,14 @@
 // DLL Export Macros
 //--------------------------------------------------------------------
 #ifdef MODELMANAGER_EXPORTS
-#define MODELMANAGER_API __declspec(dllexport)
+	#define MODELMANAGER_API __declspec(dllexport)
 #else
-#define MODELMANAGER_API __declspec(dllimport)
+	#define MODELMANAGER_API __declspec(dllimport)
 #endif
 
 //////////////////////////////////////////////////////////////////////
 // External Header Includes
 //--------------------------------------------------------------------
-#pragma once
 
 //////////////////////////////////////////////////////////////////////
 // Class Definition
